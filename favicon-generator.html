@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Favicon Generator</title>
+    <style>
+        body { 
+            background: #222; 
+            color: #0f0; 
+            font-family: monospace; 
+            padding: 20px;
+            text-align: center;
+        }
+        canvas { 
+            border: 2px solid #0f0; 
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        #preview { 
+            margin: 20px; 
+        }
+        button {
+            background: #000;
+            color: #0f0;
+            border: 2px solid #0f0;
+            padding: 10px 20px;
+            font-family: monospace;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>RuneHTML Favicon Generator</h1>
+    <div id="preview"></div>
+    <button onclick="download(32)">Download 32x32</button>
+    <button onclick="download(64)">Download 64x64</button>
+    
+    <script>
+        function createFavicon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Black background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Green border
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = size / 16;
+            ctx.strokeRect(size * 0.0625, size * 0.0625, size * 0.875, size * 0.875);
+            
+            // Draw "RH" in pixelated style
+            ctx.fillStyle = '#00ff00';
+            const unit = size / 32;
+            
+            // R letter
+            // Vertical line
+            ctx.fillRect(8*unit, 8*unit, 2*unit, 16*unit);
+            // Top horizontal
+            ctx.fillRect(8*unit, 8*unit, 8*unit, 2*unit);
+            // Middle curve top
+            ctx.fillRect(14*unit, 8*unit, 2*unit, 6*unit);
+            // Middle horizontal
+            ctx.fillRect(8*unit, 14*unit, 6*unit, 2*unit);
+            // Diagonal leg
+            ctx.fillRect(10*unit, 16*unit, 2*unit, 2*unit);
+            ctx.fillRect(12*unit, 18*unit, 2*unit, 2*unit);
+            ctx.fillRect(14*unit, 20*unit, 2*unit, 4*unit);
+            
+            // H letter
+            // Left vertical
+            ctx.fillRect(18*unit, 8*unit, 2*unit, 16*unit);
+            // Right vertical
+            ctx.fillRect(24*unit, 8*unit, 2*unit, 16*unit);
+            // Middle horizontal
+            ctx.fillRect(18*unit, 15*unit, 8*unit, 2*unit);
+            
+            // Cursor dot
+            ctx.fillRect(27*unit, 23*unit, 2*unit, 2*unit);
+            
+            return canvas;
+        }
+        
+        // Show preview
+        const preview = createFavicon(128);
+        document.getElementById('preview').appendChild(preview);
+        
+        function download(size) {
+            const canvas = createFavicon(size);
+            const link = document.createElement('a');
+            link.download = `favicon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>

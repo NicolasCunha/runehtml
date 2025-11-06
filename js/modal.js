@@ -229,6 +229,96 @@ class ModalManager {
     }
 
     /**
+     * Show an About modal with game information
+     */
+    showAbout() {
+        const modalHTML = `
+            <div class="modal-overlay">
+                <div class="modal-container" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <h2>> ABOUT RUNEHTML</h2>
+                    </div>
+                    <div class="modal-content" style="text-align: left; max-height: 400px; overflow-y: auto;">
+                        <p style="margin-bottom: 15px;">
+                            <span style="color: #ffff00;">RuneHTML</span> is a retro terminal-style idle game 
+                            that brings the nostalgia of classic MMORPGs to your browser.
+                        </p>
+                        
+                        <p style="margin-bottom: 15px;">
+                            <strong style="color: #33dd33;">Inspiration:</strong><br>
+                            This game is heavily inspired by <span style="color: #ffff00;">RuneScape</span>, 
+                            the iconic MMORPG by Jagex. The skill system, leveling curve (1-99), 
+                            and various mechanics pay homage to the classic game that defined 
+                            a generation of online gaming.
+                        </p>
+                        
+                        <p style="margin-bottom: 15px;">
+                            <strong style="color: #33dd33;">Features:</strong><br>
+                            • 6 skills to master (Melee, Defense, Ranged, Mining, Woodcutting, Chemistry)<br>
+                            • Progressive content that unlocks every 10 levels<br>
+                            • Offline training at 80% efficiency<br>
+                            • Multiple character save slots<br>
+                            • Retro terminal aesthetic with CRT effects
+                        </p>
+                        
+                        <p style="margin-bottom: 15px;">
+                            <strong style="color: #33dd33;">Development:</strong><br>
+                            Built with pure vanilla HTML, CSS, and JavaScript.<br>
+                            No frameworks, no dependencies - just web fundamentals.
+                        </p>
+                        
+                        <p style="margin-bottom: 10px;">
+                            Created with the assistance of <span style="color: #ffff00;">Claude 3.5 Sonnet</span> 
+                            by Anthropic.
+                        </p>
+                        
+                        <p style="font-size: 8px; color: #666; margin-top: 15px;">
+                            RuneScape is a trademark of Jagex Ltd.<br>
+                            This is a fan project and is not affiliated with Jagex.
+                        </p>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="modal-about-ok-btn" class="modal-btn modal-btn-ok">OK</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Insert modal into document
+        const modalElement = document.createElement('div');
+        modalElement.innerHTML = modalHTML;
+        this.currentModal = modalElement.firstElementChild;
+        document.body.appendChild(this.currentModal);
+
+        // Set up event listeners
+        const okBtn = document.getElementById('modal-about-ok-btn');
+        const overlay = this.currentModal;
+
+        okBtn.addEventListener('click', () => {
+            this.closeModal();
+        });
+
+        // Close on overlay click
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                this.closeModal();
+            }
+        });
+        
+        // Close on Escape key
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                this.closeModal();
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+
+        // Focus the OK button
+        okBtn.focus();
+    }
+
+    /**
      * Close the current modal
      */
     closeModal() {

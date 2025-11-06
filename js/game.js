@@ -70,7 +70,17 @@ class Game {
                 }
                 this.loadGame();
                 break;
+            case 'about':
+                this.showAbout();
+                break;
         }
+    }
+    
+    /**
+     * Show the About modal
+     */
+    showAbout() {
+        modalManager.showAbout();
     }
     
     /**
