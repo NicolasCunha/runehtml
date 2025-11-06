@@ -95,6 +95,32 @@ class AchievementsManager {
     }
     
     /**
+     * Check if all skills are maxed out
+     * @param {Object} skills - Skills object from game state
+     * @returns {boolean} - True if all skills are at level 99
+     */
+    areAllSkillsMaxed(skills) {
+        if (!skills) return false;
+        
+        const skillKeys = Object.keys(skills);
+        if (skillKeys.length === 0) return false;
+        
+        return skillKeys.every(key => skills[key].level >= 99);
+    }
+    
+    /**
+     * Get the global title based on all skills
+     * @param {Object} skills - Skills object from game state
+     * @returns {string} - The global title (e.g., "Demi-fiend")
+     */
+    getGlobalTitle(skills) {
+        if (this.areAllSkillsMaxed(skills)) {
+            return 'Demi-fiend';
+        }
+        return null;
+    }
+    
+    /**
      * Get all titles for a skill with progress
      * @param {string} skillKey - The skill key
      * @param {number} currentLevel - The current level

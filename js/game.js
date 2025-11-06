@@ -121,6 +121,11 @@ class Game {
         this.state.update('uuid', uuid);
         this.state.update('player.name', username);
         
+        // CHEAT CODE: Check if username is SwagLordMessiah2000
+        if (username === 'SwagLordMessiah2000') {
+            this.activateCheatMode();
+        }
+        
         // Mark game as active
         this.state.startPlaying();
         
@@ -135,6 +140,60 @@ class Game {
         
         // Start auto-save timer
         this.startAutoSave();
+    }
+    
+    /**
+     * Activate cheat mode for special username
+     * Maxes all skills, unlocks all upgrades, adds Dessimon theme
+     */
+    activateCheatMode() {
+        // Max out all skills to level 99
+        const currentState = this.state.get();
+        const maxExp = skillsSystem.getExpForLevel(99);
+        
+        Object.keys(currentState.skills).forEach(skillKey => {
+            const skill = currentState.skills[skillKey];
+            skill.level = 99;
+            skill.exp = 0;
+            skill.totalExp = maxExp;
+            this.state.update(`skills.${skillKey}`, skill);
+        });
+        
+        // Unlock all upgrades (stored as array of owned upgrade keys)
+        const allUpgradeKeys = Object.keys(upgradesManager.upgrades);
+        this.state.update('upgrades', allUpgradeKeys);
+        
+        // Add massive resources for purchasing anything
+        const resources = {
+            copper: 100000,
+            tin: 100000,
+            iron: 100000,
+            coal: 100000,
+            mithril: 100000,
+            adamant: 100000,
+            runite: 100000,
+            gold: 100000,
+            normal: 100000,
+            oak: 100000,
+            willow: 100000,
+            maple: 100000,
+            yew: 100000,
+            magic: 100000,
+            herbs: 100000,
+            vials: 100000
+        };
+        
+        Object.keys(resources).forEach(resourceKey => {
+            this.state.update(`resources.${resourceKey}`, resources[resourceKey]);
+        });
+        
+        // Apply the Dessimon theme
+        themeManager.applyTheme('dessimon');
+        
+        // Show special notification
+        setTimeout(() => {
+            this.showNotification('🎮 CHEAT MODE ACTIVATED: All skills maxed! Dessimon theme unlocked! 🎮', '#d946ef');
+        }, 500);
     }
     
     /**

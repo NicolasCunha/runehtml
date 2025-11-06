@@ -86,6 +86,15 @@ class SkillsSystem {
      * @returns {Object} - Updated skill with level up info
      */
     addExp(skill, expGain) {
+        // Prevent exp gain if already at max level
+        if (skill.level >= this.MAX_LEVEL) {
+            return {
+                skill: skill,
+                leveledUp: false,
+                newLevel: skill.level
+            };
+        }
+        
         skill.totalExp += expGain;
         const newLevel = this.getLevelFromExp(skill.totalExp);
         const leveledUp = newLevel > skill.level;

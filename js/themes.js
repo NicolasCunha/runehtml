@@ -35,6 +35,14 @@ class ThemeManager {
                 primaryDark: '#aa0000',
                 glow: 'rgba(255, 51, 51, 0.5)',
                 glowStrong: 'rgba(255, 51, 51, 0.8)'
+            },
+            dessimon: {
+                name: 'Dessimon',
+                primary: '#d946ef',
+                primaryDim: '#c084fc',
+                primaryDark: '#9333ea',
+                glow: 'rgba(217, 70, 239, 0.6)',
+                glowStrong: 'rgba(192, 132, 252, 0.9)'
             }
         };
         

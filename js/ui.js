@@ -228,11 +228,23 @@ class UIManager {
         const titleElement = document.getElementById('player-title');
         if (!titleElement) return;
         
+        // Check for global title first (all skills maxed)
+        const currentState = gameState.get();
+        const globalTitle = achievementsManager.getGlobalTitle(currentState.skills);
+        
+        if (globalTitle) {
+            titleElement.textContent = `[${globalTitle}]`;
+            titleElement.style.color = '#ff00ff'; // Special purple color for Demi-fiend
+            return;
+        }
+        
         if (skillKey && level) {
             const title = achievementsManager.getTitle(skillKey, level);
             titleElement.textContent = `[${title}]`;
+            titleElement.style.color = ''; // Reset to default
         } else {
             titleElement.textContent = '';
+            titleElement.style.color = '';
         }
     }
     
