@@ -51,11 +51,16 @@ class ThemeManager {
     
     /**
      * Get all available themes
+     * @param {string} playerName - Optional player name to check for special theme access
      * @returns {Object} - Object with theme keys and names
      */
-    getThemes() {
+    getThemes(playerName = null) {
         const themeList = {};
         for (const [key, theme] of Object.entries(this.themes)) {
+            // Dessimon theme is only available to SwagLordMessiah2000
+            if (key === 'dessimon' && playerName !== 'SwagLordMessiah2000') {
+                continue;
+            }
             themeList[key] = theme.name;
         }
         return themeList;

@@ -571,6 +571,11 @@ class Game {
                 // Save the current game
                 this.saveGame();
                 
+                // If using Dessimon theme, reset to default
+                if (themeManager.getCurrentTheme() === 'dessimon') {
+                    themeManager.applyTheme('green');
+                }
+                
                 // Stop the game session
                 this.state.stopPlaying();
                 

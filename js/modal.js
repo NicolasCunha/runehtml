@@ -202,7 +202,8 @@ class ModalManager {
      * @param {Function} onThemeSelect - Callback when theme is selected
      */
     showThemeSelector(onThemeSelect) {
-        const themes = themeManager.getThemes();
+        const playerName = gameState.get().player?.name || null;
+        const themes = themeManager.getThemes(playerName);
         const currentTheme = themeManager.getCurrentTheme();
         
         const themeButtons = Object.entries(themes).map(([key, name]) => {
