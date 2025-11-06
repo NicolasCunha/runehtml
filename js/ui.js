@@ -230,8 +230,22 @@ class UIManager {
         const savesHTML = saves.map((save, index) => {
             const createdDate = new Date(save.created).toLocaleDateString();
             const lastPlayedDate = new Date(save.lastPlayed).toLocaleDateString();
-            const playTimeHours = Math.floor(save.playTime / 3600000);
-            const playTimeMinutes = Math.floor((save.playTime % 3600000) / 60000);
+            
+            // Ensure playTime is a number and format it properly
+            const playTimeMs = Number(save.playTime) || 0;
+            const playTimeHours = Math.floor(playTimeMs / 3600000);
+            const playTimeMinutes = Math.floor((playTimeMs % 3600000) / 60000);
+            const playTimeSeconds = Math.floor((playTimeMs % 60000) / 1000);
+            
+            // Format play time string - show hours if > 0, always show minutes and seconds
+            let playTimeStr = '';
+            if (playTimeHours > 0) {
+                playTimeStr = `${playTimeHours}h ${playTimeMinutes}m`;
+            } else if (playTimeMinutes > 0) {
+                playTimeStr = `${playTimeMinutes}m ${playTimeSeconds}s`;
+            } else {
+                playTimeStr = `${playTimeSeconds}s`;
+            }
             
             return `
                 <div class="save-card" data-uuid="${save.uuid}">
@@ -244,7 +258,7 @@ class UIManager {
                         <p>Total Level: <span style="color: #ffff00;">${save.totalLevel}</span></p>
                         <p>Created: ${createdDate}</p>
                         <p>Last Played: ${lastPlayedDate}</p>
-                        <p>Play Time: ${playTimeHours}h ${playTimeMinutes}m</p>
+                        <p>Play Time: ${playTimeStr}</p>
                     </div>
                     <button class="load-save-btn" data-uuid="${save.uuid}">Load Game</button>
                 </div>

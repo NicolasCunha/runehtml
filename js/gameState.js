@@ -54,7 +54,6 @@ class GameState {
     load(savedState) {
         // Merge saved state with default state to ensure all properties exist
         this.state = { ...this.createDefaultState(), ...savedState };
-        console.log('Game state loaded:', this.state);
     }
 
     /**
@@ -95,9 +94,16 @@ class GameState {
     }
 
     /**
-     * Stop the game session
+     * Stop the game session and update play time
      */
     stopPlaying() {
+        // Calculate session time before stopping
+        if (this.state.isPlaying && this.state.stats.sessionStart) {
+            const now = Date.now();
+            const sessionTime = now - this.state.stats.sessionStart;
+            this.state.stats.playTime = (this.state.stats.playTime || 0) + sessionTime;
+        }
+        
         this.state.isPlaying = false;
     }
 

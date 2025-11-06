@@ -25,7 +25,6 @@ class StorageAPI {
     saveGame(gameState) {
         try {
             if (!gameState.uuid) {
-                console.error('Cannot save game without UUID');
                 return false;
             }
             
@@ -33,10 +32,8 @@ class StorageAPI {
             const saveKey = this.getSaveKey(gameState.uuid);
             localStorage.setItem(saveKey, serializedState);
             localStorage.setItem(this.LAST_SAVE_KEY, gameState.uuid);
-            console.log('Game saved successfully!');
             return true;
         } catch (error) {
-            console.error('Failed to save game:', error);
             return false;
         }
     }
@@ -50,7 +47,6 @@ class StorageAPI {
             const lastUUID = localStorage.getItem(this.LAST_SAVE_KEY);
             
             if (!lastUUID) {
-                console.log('No saved game found');
                 return null;
             }
             
@@ -58,15 +54,12 @@ class StorageAPI {
             const serializedState = localStorage.getItem(saveKey);
             
             if (!serializedState) {
-                console.log('No saved game found');
                 return null;
             }
 
             const gameState = JSON.parse(serializedState);
-            console.log('Game loaded successfully!');
             return gameState;
         } catch (error) {
-            console.error('Failed to load game:', error);
             return null;
         }
     }
@@ -102,10 +95,12 @@ class StorageAPI {
                         created: gameState.player.created,
                         totalLevel: this.calculateTotalLevel(gameState.skills),
                         playTime: gameState.stats.playTime || 0,
-                        lastPlayed: gameState.stats.sessionStart || gameState.player.created
+                        lastPlayed: (gameState.offlineTraining && gameState.offlineTraining.lastSaveTime) 
+                            ? gameState.offlineTraining.lastSaveTime 
+                            : gameState.player.created
                     });
                 } catch (error) {
-                    console.error('Failed to parse save:', key, error);
+                    // Skip invalid saves
                 }
             }
         }
@@ -140,19 +135,16 @@ class StorageAPI {
             const serializedState = localStorage.getItem(saveKey);
             
             if (!serializedState) {
-                console.log('Save not found for UUID:', uuid);
                 return null;
             }
 
             const gameState = JSON.parse(serializedState);
-            console.log('Game loaded successfully!');
             
             // Update last save key
             localStorage.setItem(this.LAST_SAVE_KEY, uuid);
             
             return gameState;
         } catch (error) {
-            console.error('Failed to load game:', error);
             return null;
         }
     }
@@ -173,11 +165,9 @@ class StorageAPI {
                 const saveKey = this.getSaveKey(uuid);
                 localStorage.removeItem(saveKey);
                 localStorage.removeItem(this.LAST_SAVE_KEY);
-                console.log('Save deleted successfully!');
             }
             return true;
         } catch (error) {
-            console.error('Failed to delete save:', error);
             return false;
         }
     }
@@ -189,10 +179,8 @@ class StorageAPI {
     clearAll() {
         try {
             localStorage.clear();
-            console.log('All storage cleared!');
             return true;
         } catch (error) {
-            console.error('Failed to clear storage:', error);
             return false;
         }
     }

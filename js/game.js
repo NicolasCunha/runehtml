@@ -18,7 +18,6 @@ class Game {
     init() {
         this.setupMenuListeners();
         this.updateLoadGameButton();
-        console.log('RuneHTML initialized...');
     }
     
     /**
@@ -71,8 +70,6 @@ class Game {
                 }
                 this.loadGame();
                 break;
-            default:
-                console.log('Unknown action:', action);
         }
     }
     
@@ -81,8 +78,6 @@ class Game {
      * Shows username selection screen first
      */
     startNewGame() {
-        console.log('Starting new game...');
-        
         // Show username selection screen
         this.ui.showUsernameScreen((username) => {
             this.createCharacter(username);
@@ -94,8 +89,6 @@ class Game {
      * @param {string} username - The player's chosen username
      */
     createCharacter(username) {
-        console.log('Creating character:', username);
-        
         // Reset game state to defaults
         this.state.reset();
         
@@ -125,16 +118,12 @@ class Game {
      * Shows save selection screen if multiple saves exist
      */
     loadGame() {
-        console.log('Loading game...');
-        
         // Get all available saves
         const saves = this.storage.getAllSaves();
         
         if (saves.length === 0) {
             // No saves found - show error and return to menu
-            this.ui.showNoSaveError(() => {
-                console.log('Returned to main menu');
-            });
+            this.ui.showNoSaveError(() => {});
             return;
         }
         
@@ -151,8 +140,6 @@ class Game {
      * @param {string} uuid - The UUID of the save to load
      */
     loadGameByUUID(uuid) {
-        console.log('Loading save with UUID:', uuid);
-        
         const savedState = this.storage.loadGameByUUID(uuid);
         
         if (savedState) {
@@ -175,9 +162,7 @@ class Game {
             });
         } else {
             // Failed to load - show error and return to menu
-            this.ui.showNoSaveError(() => {
-                console.log('Returned to main menu');
-            });
+            this.ui.showNoSaveError(() => {});
         }
     }
     
@@ -333,8 +318,6 @@ class Game {
                 
                 // Show the main menu
                 this.ui.showMainMenu();
-                
-                console.log('Returned to main menu');
             }
         );
     }
@@ -348,11 +331,8 @@ class Game {
         const skill = currentState.skills[skillKey];
         
         if (!skill) {
-            console.error('Invalid skill:', skillKey);
             return;
         }
-        
-        console.log(`Training ${skill.name}...`);
         
         // Update current activity
         this.state.update('currentActivity', skillKey);
@@ -419,7 +399,6 @@ class Game {
         this.autoSaveInterval = setInterval(() => {
             if (this.state.isPlaying()) {
                 this.saveGame();
-                console.log('Auto-saved game');
             }
         }, 30000);
     }
@@ -462,12 +441,23 @@ class Game {
     
     /**
      * Save the current game state to storage
-     * Updates offline training data before saving
+     * Updates offline training data and play time before saving
      * @returns {boolean} - Returns true if save was successful
      */
     saveGame() {
-        // Update offline training data
         const currentState = this.state.get();
+        
+        // Update play time if currently playing
+        if (currentState.isPlaying && currentState.stats.sessionStart) {
+            const now = Date.now();
+            const sessionTime = now - currentState.stats.sessionStart;
+            const totalPlayTime = (currentState.stats.playTime || 0) + sessionTime;
+            
+            this.state.update('stats.playTime', totalPlayTime);
+            this.state.update('stats.sessionStart', now);
+        }
+        
+        // Update offline training data
         this.state.update('offlineTraining.lastSaveTime', Date.now());
         this.state.update('offlineTraining.trainingSkill', currentState.currentActivity);
         
