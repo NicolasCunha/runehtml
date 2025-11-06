@@ -9,6 +9,11 @@ class UIManager {
             gameArea: document.getElementById('game-area'),
             logo: document.querySelector('.logo')
         };
+        
+        // Initialize specialized renderers
+        this.skillCardRenderer = new SkillCardRenderer();
+        this.combatDisplayRenderer = new CombatDisplayRenderer();
+        this.animationRenderer = new AnimationRenderer();
     }
 
     /**
@@ -116,34 +121,25 @@ class UIManager {
      * @param {Object} gameState - Current game state
      */
     showGameScreen(gameState) {
-        const skillsHTML = Object.entries(gameState.skills).map(([key, skill]) => {
-            const progress = skillsSystem.getProgressPercent(skill);
-            const nextLevelExp = skillsSystem.getExpForNextLevel(skill.level);
-            
-            return `
-                <div class="skill-card">
-                    <div class="skill-header">
-                        <span class="skill-name">${skill.name}</span>
-                        <span class="skill-level">Lv ${skill.level}</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${progress}%"></div>
-                    </div>
-                    <div class="skill-info">
-                        <span>EXP: ${skill.totalExp} / ${nextLevelExp}</span>
-                    </div>
-                    <button class="train-button" data-skill="${key}">Train</button>
-                </div>
-            `;
-        }).join('');
+        // Use SkillCardRenderer for skills HTML
+        const skillsHTML = this.skillCardRenderer.renderSkillCards(gameState.skills);
         
         const content = `
             <div class="game-container">
                 <div class="game-header">
-                    <h2>> ${gameState.player.name}'s Adventure</h2>
-                    <div class="header-buttons">
-                        <button id="save-button" class="small-button">Save Game</button>
-                        <button id="menu-button" class="small-button">Main Menu</button>
+                    <div class="header-left">
+                        <h2>> ${gameState.player.name}'s Adventure <span id="player-title" style="color: var(--color-primary-dim); font-size: 10px;"></span></h2>
+                    </div>
+                    <div class="header-right">
+                        <button id="hamburger-menu" class="hamburger-button" title="Menu">☰</button>
+                        <div id="dropdown-menu" class="dropdown-menu">
+                            <button id="stats-button" class="menu-item-btn">📊 Stats</button>
+                            <button id="shop-button" class="menu-item-btn">🛒 Shop</button>
+                            <button id="inventory-button" class="menu-item-btn">📦 Inventory</button>
+                            <button id="theme-button" class="menu-item-btn">🎨 Theme</button>
+                            <button id="save-button" class="menu-item-btn">💾 Save Game</button>
+                            <button id="menu-button" class="menu-item-btn">🏠 Main Menu</button>
+                        </div>
                     </div>
                 </div>
                 <br>
@@ -167,7 +163,7 @@ class UIManager {
     }
 
     /**
-     * Update the animation area with skill-specific animation
+     * Update the animation area with skill-specific animation or combat
      * @param {string} skillKey - The skill being trained
      * @param {number} level - The current skill level
      */
@@ -175,25 +171,78 @@ class UIManager {
         const animationArea = document.getElementById('animation-area');
         if (!animationArea) return;
         
-        // Get the appropriate animation based on level
-        const anim = animationManager.getAnimation(skillKey, level);
+        // Check if this is a combat skill and if combat is active
+        if (combatManager && combatManager.isCombatSkill(skillKey)) {
+            this.updateCombatDisplay();
+            return;
+        }
         
-        animationArea.innerHTML = `
-            <div class="training-animation">
-                <div class="animation-scene">
-                    <div class="bg-elements">${anim.bgElements}</div>
-                    <div class="character-container">
-                        <pre class="stick-figure animate">${anim.character}</pre>
-                    </div>
-                    ${anim.target ? `
-                    <div class="target-container">
-                        <pre class="training-target">${anim.target}</pre>
-                    </div>
-                    ` : ''}
-                </div>
-                <p class="activity-text">${anim.name}</p>
-            </div>
-        `;
+        // Delegate to AnimationRenderer
+        this.animationRenderer.render(animationArea, skillKey, level);
+    }
+    
+    /**
+     * Update the combat display in the animation area
+     */
+    updateCombatDisplay() {
+        const animationArea = document.getElementById('animation-area');
+        if (!animationArea) return;
+        
+        const combat = gameState.get().combat;
+        
+        // Delegate to CombatDisplayRenderer
+        this.combatDisplayRenderer.render(animationArea, combat);
+        
+        // Setup event listeners for combat buttons
+        this.setupCombatButtons();
+    }
+    
+    /**
+     * Setup event listeners for combat buttons
+     */
+    setupCombatButtons() {
+        this.combatDisplayRenderer.setupEventListeners(
+            // onUsePotion
+            () => {
+                modalManager.showHealingPotions();
+            },
+            // onDrinkBuff
+            () => {
+                modalManager.showBuffPotions();
+            },
+            // onRemoveBuff
+            () => {
+                const result = combatManager.removeActiveBuff();
+                // Show notification or update UI
+                this.updateCombatDisplay();
+            }
+        );
+    }
+    
+    /**
+     * Update the player's title based on current skill
+     * @param {string} skillKey - The skill being trained
+     * @param {number} level - Current level in the skill
+     */
+    updatePlayerTitle(skillKey, level) {
+        const titleElement = document.getElementById('player-title');
+        if (!titleElement) return;
+        
+        if (skillKey && level) {
+            const title = achievementsManager.getTitle(skillKey, level);
+            titleElement.textContent = `[${title}]`;
+        } else {
+            titleElement.textContent = '';
+        }
+    }
+    
+    /**
+     * Update skill cards with current levels and experience
+     * @param {Object} skills - Skills object from game state
+     */
+    updateSkillCards(skills) {
+        // Delegate to SkillCardRenderer
+        this.skillCardRenderer.updateSkillCards(skills);
     }
 
     /**
@@ -365,7 +414,7 @@ class UIManager {
      * @param {number} levelsGained - Levels gained
      * @param {Function} callback - Callback when closed
      */
-    showOfflineGainsModal(skillName, timeOffline, expGained, oldLevel, newLevel, levelsGained, callback) {
+    showOfflineGainsModal(skillName, timeOffline, expGained, oldLevel, newLevel, levelsGained, resourcesGathered, callback) {
         modalManager.showOfflineGains(
             skillName,
             timeOffline,
@@ -373,6 +422,7 @@ class UIManager {
             oldLevel,
             newLevel,
             levelsGained,
+            resourcesGathered,
             callback
         );
     }

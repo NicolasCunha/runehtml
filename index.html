@@ -36,6 +36,9 @@
                     <div class="menu-item" data-action="load-game" id="load-game-menu-item">
                         <span class="menu-cursor">></span><span class="menu-text">Load Game</span>
                     </div>
+                    <div class="menu-item" data-action="theme">
+                        <span class="menu-cursor">></span><span class="menu-text">Theme</span>
+                    </div>
                     <div class="menu-item" data-action="about">
                         <span class="menu-cursor">></span><span class="menu-text">About</span>
                     </div>
@@ -49,14 +52,39 @@
         </div>
     </div>
 
-    <!-- Load modules in order: utilities first, then main game -->
+        <!-- Load modules in order: utilities first, then main game -->
+    <script src="js/themes.js"></script>
+    <!-- Modal system - load BaseModal first, then specialized modals, then ModalManager -->
+    <script src="js/modals/BaseModal.js"></script>
+    <script src="js/modals/ConfirmationModal.js"></script>
+    <script src="js/modals/InventoryModal.js"></script>
+    <script src="js/modals/PotionModal.js"></script>
+    <script src="js/modals/OfflineGainsModal.js"></script>
     <script src="js/modal.js"></script>
     <script src="js/usernameGenerator.js"></script>
     <script src="js/skills.js"></script>
     <script src="js/animations.js"></script>
+    <script src="js/resources.js"></script>
+    <script src="js/upgrades.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/statistics.js"></script>
+    <script src="js/enemies.js"></script>
+    <script src="js/combatResources.js"></script>
+    <script src="js/combat.js"></script>
     <script src="js/storage.js"></script>
     <script src="js/gameState.js"></script>
+    <!-- UI system - load renderers first, then UIManager -->
+    <script src="js/ui/SkillCardRenderer.js"></script>
+    <script src="js/ui/CombatDisplayRenderer.js"></script>
+    <script src="js/ui/AnimationRenderer.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/game.js"></script>
+    <script>
+        // Load saved theme on page load
+        themeManager.loadSavedTheme();
+    </script>
+</body>
+</html>
+```
 </body>
 </html>

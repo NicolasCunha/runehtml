@@ -26,16 +26,67 @@ class GameState {
                 trainingSkill: null
             },
             resources: {
-                wood: 0,
-                stone: 0,
+                // Mining ores
+                copper: 0,
+                tin: 0,
                 iron: 0,
-                gold: 0
+                coal: 0,
+                gold: 0,
+                mithril: 0,
+                adamant: 0,
+                runite: 0,
+                // Woodcutting logs
+                normal: 0,
+                oak: 0,
+                willow: 0,
+                maple: 0,
+                yew: 0,
+                magic: 0,
+                redwood: 0,
+                // Chemistry potions
+                basic: 0,
+                health: 0,
+                mana: 0,
+                energy: 0,
+                poison: 0,
+                fire: 0,
+                frost: 0,
+                divine: 0,
+                life: 0
             },
-            upgrades: {},
+            upgrades: [],
             stats: {
                 totalActions: 0,
                 playTime: 0,
-                sessionStart: Date.now()
+                sessionStart: Date.now(),
+                skillTime: {
+                    mining: 0,
+                    woodcutting: 0,
+                    chemistry: 0,
+                    melee: 0,
+                    defense: 0,
+                    ranged: 0
+                }
+            },
+            combat: {
+                inCombat: false,
+                skill: null,
+                currentEnemy: null,
+                playerMaxHP: 0,
+                playerCurrentHP: 0,
+                combatLog: [],
+                turn: 'player',
+                activeBuff: null,
+                potionCooldown: 0,
+                isRegenerating: false,
+                regenerationStartTime: 0
+            },
+            statistics: {
+                enemiesDefeated: 0,
+                meleeEnemiesDefeated: 0,
+                rangedEnemiesDefeated: 0,
+                defenseEnemiesDefeated: 0,
+                potionsUsed: 0
             }
         };
     }
@@ -52,8 +103,34 @@ class GameState {
      * @param {Object} savedState - The saved game state to load
      */
     load(savedState) {
+        // Create default state
+        const defaultState = this.createDefaultState();
+        
         // Merge saved state with default state to ensure all properties exist
-        this.state = { ...this.createDefaultState(), ...savedState };
+        this.state = { ...defaultState, ...savedState };
+        
+        // Deep merge for resources to ensure backward compatibility
+        this.state.resources = { ...defaultState.resources, ...(savedState.resources || {}) };
+        
+        // Ensure upgrades is always an array (for backward compatibility)
+        if (!Array.isArray(this.state.upgrades)) {
+            this.state.upgrades = [];
+        }
+        
+        // Ensure stats.skillTime exists (for backward compatibility)
+        if (!this.state.stats.skillTime) {
+            this.state.stats.skillTime = defaultState.stats.skillTime;
+        }
+        
+        // Ensure combat state exists (for backward compatibility)
+        if (!this.state.combat) {
+            this.state.combat = defaultState.combat;
+        }
+        
+        // Ensure statistics exist (for backward compatibility)
+        if (!this.state.statistics) {
+            this.state.statistics = defaultState.statistics;
+        }
     }
 
     /**

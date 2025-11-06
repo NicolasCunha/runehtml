@@ -1,5 +1,14 @@
 /* Terminal Idle Game - Styles */
 
+/* CSS Custom Properties for theming */
+:root {
+    --color-primary: #00ff00;
+    --color-primary-dim: #33dd33;
+    --color-primary-dark: #008800;
+    --color-glow: rgba(0, 255, 0, 0.5);
+    --color-glow-strong: rgba(0, 255, 0, 0.8);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -41,7 +50,7 @@ body {
     padding: 30px;
     min-height: 768px;
     background-color: #000000;
-    color: #33dd33;
+    color: var(--color-primary-dim);
     overflow-y: auto;
 }
 
@@ -55,7 +64,7 @@ body {
 .ascii-logo {
     font-size: 8px;
     line-height: 1.2;
-    color: #33dd33;
+    color: var(--color-primary-dim);
     text-shadow: 0 0 8px rgba(51, 221, 51, 0.5);
 }
 
@@ -76,7 +85,7 @@ body {
 .menu-item {
     padding: 15px 20px;
     margin: 10px 0;
-    border: 2px solid #33dd33;
+    border: 2px solid var(--color-primary-dim);
     cursor: pointer;
     transition: all 0.2s;
     font-size: 12px;
@@ -86,7 +95,7 @@ body {
 }
 
 .menu-item:hover:not(.disabled) {
-    background-color: #33dd33;
+    background-color: var(--color-primary-dim);
     color: #000000;
     box-shadow: 0 0 15px rgba(51, 221, 51, 0.6);
     transform: translateX(5px);
@@ -212,8 +221,8 @@ body {
 #username-input {
     flex: 1;
     background: #000;
-    border: 2px solid #33dd33;
-    color: #33dd33;
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary-dim);
     padding: 10px;
     font-family: 'Press Start 2P', cursive;
     font-size: 10px;
@@ -227,8 +236,8 @@ body {
 
 .dice-button {
     background: #000;
-    border: 2px solid #33dd33;
-    color: #33dd33;
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary-dim);
     padding: 10px 15px;
     font-size: 16px;
     cursor: pointer;
@@ -236,15 +245,15 @@ body {
 }
 
 .dice-button:hover {
-    background: #33dd33;
+    background: var(--color-primary-dim);
     transform: rotate(360deg);
     transition: transform 0.5s;
 }
 
 .action-button, .small-button {
     background: #000;
-    border: 2px solid #33dd33;
-    color: #33dd33;
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary-dim);
     padding: 10px 20px;
     font-family: 'Press Start 2P', cursive;
     font-size: 10px;
@@ -253,7 +262,7 @@ body {
 }
 
 .action-button:hover, .small-button:hover {
-    background: #33dd33;
+    background: var(--color-primary-dim);
     color: #000;
     box-shadow: 0 0 15px rgba(51, 221, 51, 0.6);
 }
@@ -280,6 +289,73 @@ body {
     margin: 0;
 }
 
+.header-left {
+    flex: 1;
+}
+
+.header-right {
+    position: relative;
+}
+
+/* Hamburger Menu */
+.hamburger-button {
+    background: #000;
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary);
+    padding: 10px 15px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.hamburger-button:hover {
+    background: var(--color-primary-dim);
+    color: #000;
+    box-shadow: 0 0 15px var(--color-glow);
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 5px;
+    background: #000;
+    border: 2px solid var(--color-primary);
+    min-width: 200px;
+    z-index: 1000;
+    box-shadow: 0 0 20px var(--color-glow);
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.menu-item-btn {
+    width: 100%;
+    background: #000;
+    border: none;
+    border-bottom: 1px solid var(--color-primary-dim);
+    color: var(--color-primary-dim);
+    padding: 12px 15px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.menu-item-btn:last-child {
+    border-bottom: none;
+}
+
+.menu-item-btn:hover {
+    background: var(--color-primary-dim);
+    color: #000;
+}
+
 .header-buttons {
     display: flex;
     gap: 10px;
@@ -287,7 +363,7 @@ body {
 
 /* Animation Area */
 .animation-area {
-    border: 2px solid #33dd33;
+    border: 2px solid var(--color-primary-dim);
     padding: 30px;
     text-align: center;
     min-height: 200px;
@@ -332,7 +408,7 @@ body {
     opacity: 0.3;
     animation: floatElements 3s infinite ease-in-out;
     letter-spacing: 30px;
-    color: #33dd33;
+    color: var(--color-primary-dim);
 }
 
 @keyframes floatElements {
@@ -348,7 +424,7 @@ body {
 .stick-figure {
     font-size: 12px;
     line-height: 1.3;
-    color: #33dd33;
+    color: var(--color-primary-dim);
     margin: 0;
     text-shadow: 0 0 5px rgba(51, 221, 51, 0.5);
     font-weight: bold;
@@ -414,7 +490,7 @@ body {
 }
 
 .save-card {
-    border: 2px solid #33dd33;
+    border: 2px solid var(--color-primary-dim);
     padding: 15px;
     background: rgba(51, 221, 51, 0.05);
     cursor: pointer;
@@ -434,7 +510,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    border-bottom: 1px solid #33dd33;
+    border-bottom: 1px solid var(--color-primary-dim);
     padding-bottom: 10px;
 }
 
@@ -445,7 +521,7 @@ body {
 }
 
 .save-name {
-    color: #33dd33;
+    color: var(--color-primary-dim);
     font-size: 12px;
     flex: 1;
     margin: 0 10px;
@@ -480,8 +556,8 @@ body {
 .load-save-btn {
     width: 100%;
     background: #000;
-    border: 2px solid #33dd33;
-    color: #33dd33;
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary-dim);
     padding: 10px;
     font-family: 'Press Start 2P', cursive;
     font-size: 9px;
@@ -490,7 +566,7 @@ body {
 }
 
 .load-save-btn:hover {
-    background: #33dd33;
+    background: var(--color-primary-dim);
     color: #000;
     box-shadow: 0 0 15px rgba(51, 221, 51, 0.6);
 }
@@ -583,7 +659,7 @@ body {
 
 .modal-content {
     padding: 30px 20px;
-    color: #33dd33;
+    color: var(--color-primary-dim);
     font-size: 10px;
     line-height: 1.8;
     text-align: center;
@@ -597,14 +673,14 @@ body {
     display: flex;
     gap: 15px;
     padding: 20px;
-    border-top: 2px solid #33dd33;
+    border-top: 2px solid var(--color-primary-dim);
 }
 
 .modal-btn {
     flex: 1;
     background: #000;
-    border: 2px solid #33dd33;
-    color: #33dd33;
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary-dim);
     padding: 12px 20px;
     font-family: 'Press Start 2P', cursive;
     font-size: 10px;
@@ -628,7 +704,7 @@ body {
 
 .modal-btn:hover,
 .modal-btn:focus {
-    background: #33dd33;
+    background: var(--color-primary-dim);
     color: #000;
     box-shadow: 0 0 15px rgba(51, 221, 51, 0.6);
     outline: none;
@@ -658,6 +734,93 @@ body {
     box-shadow: 0 0 15px rgba(255, 102, 102, 0.6);
 }
 
+/* Inventory styles */
+.inventory-category {
+    margin-bottom: 15px;
+}
+
+.inventory-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid var(--color-primary-dim);
+    background: rgba(0, 0, 0, 0.5);
+    font-size: 10px;
+}
+
+.inventory-item:hover {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: var(--color-primary);
+}
+
+/* Shop styles */
+.shop-category {
+    margin-bottom: 20px;
+}
+
+.shop-item {
+    padding: 12px;
+    margin: 10px 0;
+    border: 2px solid var(--color-primary-dim);
+    background: rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.shop-item.owned {
+    border-color: #ffff00;
+    opacity: 0.6;
+}
+
+.shop-item.can-buy {
+    border-color: var(--color-primary);
+}
+
+.shop-item.can-buy:hover {
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px var(--color-glow);
+}
+
+.shop-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 10px;
+}
+
+.shop-buy-btn {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #000;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shop-buy-btn:hover {
+    background: var(--color-primary);
+    color: #000;
+    box-shadow: 0 0 10px var(--color-glow-strong);
+}
+
+/* Theme selector buttons */
+.theme-btn {
+    border-color: var(--color-primary-dim) !important;
+    color: var(--color-primary-dim) !important;
+    text-align: left;
+    justify-content: flex-start;
+}
+
+.theme-btn:hover,
+.theme-btn:focus {
+    background: var(--color-primary-dim) !important;
+    color: #000 !important;
+}
+
 /* Single button modal */
 .modal-buttons:has(#modal-ok-btn) {
     justify-content: center;
@@ -678,7 +841,7 @@ body {
 
 .offline-stats {
     background: rgba(51, 221, 51, 0.1);
-    border: 1px solid #33dd33;
+    border: 1px solid var(--color-primary-dim);
     padding: 15px;
     margin: 15px 0;
 }
@@ -713,7 +876,7 @@ body {
 }
 
 .skill-card {
-    border: 2px solid #33dd33;
+    border: 2px solid var(--color-primary-dim);
     padding: 15px;
     background: rgba(51, 221, 51, 0.02);
 }
@@ -726,7 +889,7 @@ body {
 }
 
 .skill-name {
-    color: #33dd33;
+    color: var(--color-primary-dim);
 }
 
 .skill-level {
@@ -736,7 +899,7 @@ body {
 .progress-bar {
     width: 100%;
     height: 15px;
-    border: 2px solid #33dd33;
+    border: 2px solid var(--color-primary-dim);
     background: #000;
     margin-bottom: 10px;
     overflow: hidden;
@@ -744,7 +907,7 @@ body {
 
 .progress-fill {
     height: 100%;
-    background: #33dd33;
+    background: var(--color-primary-dim);
     transition: width 0.3s ease;
 }
 
@@ -757,8 +920,8 @@ body {
 .train-button {
     width: 100%;
     background: #000;
-    border: 2px solid #33dd33;
-    color: #33dd33;
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary-dim);
     padding: 10px;
     font-family: 'Press Start 2P', cursive;
     font-size: 10px;
@@ -767,7 +930,7 @@ body {
 }
 
 .train-button:hover {
-    background: #33dd33;
+    background: var(--color-primary-dim);
     color: #000;
     box-shadow: 0 0 15px rgba(51, 221, 51, 0.6);
 }
@@ -793,4 +956,132 @@ body {
         transform: translateX(400px);
         opacity: 0;
     }
+}
+
+/* ==================== COMBAT STYLES ==================== */
+
+.combat-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.combat-header h3 {
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.combat-hp-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hp-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.hp-label {
+    font-size: 8px;
+    color: var(--color-primary-dim);
+}
+
+.hp-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(51, 221, 51, 0.1);
+    border: 2px solid var(--color-primary-dim);
+    position: relative;
+    overflow: hidden;
+}
+
+.hp-fill {
+    height: 100%;
+    background: var(--color-primary);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--color-glow);
+}
+
+.enemy-hp .hp-fill {
+    background: #ff6666 !important;
+    box-shadow: 0 0 10px rgba(255, 102, 102, 0.5) !important;
+}
+
+.player-hp .hp-fill {
+    background: #66ff66 !important;
+    box-shadow: 0 0 10px rgba(102, 255, 102, 0.5) !important;
+}
+
+.active-buff {
+    font-size: 8px;
+    color: #ffaa00;
+    text-align: center;
+    padding: 8px;
+    background: rgba(255, 170, 0, 0.1);
+    border: 1px solid #ffaa00;
+    border-radius: 3px;
+}
+
+.combat-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.combat-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    padding: 10px 15px;
+    background: rgba(51, 221, 51, 0.1);
+    border: 2px solid var(--color-primary-dim);
+    color: var(--color-primary);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.combat-btn:hover {
+    background: rgba(51, 221, 51, 0.2);
+    box-shadow: 0 0 10px var(--color-glow);
+    transform: translateY(-2px);
+}
+
+.combat-btn:active {
+    transform: translateY(0);
+}
+
+.combat-log {
+    background: rgba(51, 221, 51, 0.05);
+    border: 1px solid var(--color-primary-dim);
+    padding: 10px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.log-title {
+    font-size: 8px;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+    text-decoration: underline;
+}
+
+.log-entry {
+    font-size: 7px;
+    color: var(--color-primary-dim);
+    margin: 3px 0;
+    line-height: 1.4;
+}
+
+.combat-message {
+    text-align: center;
+    font-size: 10px;
+    color: var(--color-primary);
+}
+
+.combat-message p {
+    margin: 5px 0;
 }

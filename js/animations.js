@@ -314,13 +314,13 @@ class AnimationManager {
   │⚒✨│
   └───┘`,
                         target: `  ╔═══╗
-  ║▒▒▒║
-  ║▒◆▒║
-  ║▒▒▒║
+  ║░░░║
+  ║░◆░║
+  ║░░░║
   ╚═══╝
- Copper`,
-                        name: 'Mining Copper Ore',
-                        bgElements: '🟫 ⛏ 🟫'
+   Tin`,
+                        name: 'Mining Tin Ore',
+                        bgElements: '⚪ ⛏ ⚪'
                     },
                     {
                         min: 21, max: 30,

@@ -23,7 +23,17 @@ No installation required - just open the link and start playing!
 ### 🎯 Gameplay
 - **6 Skills to Train**: Melee Combat, Defense, Ranged, Mining, Woodcutting, and Chemistry
 - **99 Levels per Skill**: Exponential progression system inspired by RuneScape
+- **297 Unique Enemies**: Battle against 99 distinct enemies for each combat skill
+- **Combat System**: Turn-based battles with HP, damage calculation, and strategic potion usage
+- **Potion System**: Use 9 different potions for healing and combat buffs
 - **Progressive Animations**: Unique ASCII art animations that evolve every 10 levels
+- **Fantasy Titles**: Earn 10 unique titles per skill based on your level (60 total titles)
+- **Statistics Tracking**: Detailed stats including enemies defeated, potions used, and combat achievements
+- **Resource Gathering**: Collect 74+ different resources (ores, logs, potions, combat drops)
+- **Upgrade Shop**: Purchase 28 upgrades to boost your training efficiency (10%-100% bonus)
+- **Smart Shopping**: Shop automatically filters to show only your current skill's upgrades
+- **Inventory System**: Track all your collected resources organized by category
+- **4 Color Themes**: Choose between Green, Amber, Blue, or Red terminal themes
 - **Offline Training**: Earn 80% experience while away from the game
 - **Auto-Save System**: Your progress is saved automatically every 30 seconds
 - **Multiple Save Slots**: Create and manage multiple characters with UUID-based saves
@@ -36,22 +46,38 @@ No installation required - just open the link and start playing!
 - Automatic offline progress calculation
 
 ### 🎨 Skill Progression
-Each skill features multiple tiers of content:
-- **Mining**: From Copper to Runite ore
-- **Woodcutting**: From Normal Trees to Magic Trees
-- **Melee Combat**: Face various enemies from Goblins to Dragons
-- **Defense**: Train against different combat scenarios
-- **Ranged**: Master various ranged combat situations
-- **Chemistry**: Brew potions from Basic to Master level
+Each skill features multiple tiers of content and resources:
+
+**Gathering Skills:**
+- **Mining**: Gather 8 ore types (Copper → Tin → Iron → Coal → Gold → Mithril → Adamant → Runite)
+- **Woodcutting**: Chop 7 log types (Normal → Oak → Willow → Maple → Yew → Magic → Redwood)
+- **Chemistry**: Brew 9 potions (Basic → Health → Mana → Energy → Poison → Fire → Frost → Divine → Life)
+
+**Combat Skills:**
+- **Melee Combat**: Battle 99 unique melee enemies (Rats → Goblins → Dragons → God of War) and collect combat resources
+- **Defense**: Face 99 defense enemies (Angry Boar → Mammoths → Ragnarok Beast) while training your defensive skills
+- **Ranged**: Fight 99 ranged enemies (Bats → Eagles → Eternal Phoenix) to master ranged combat
+- **Combat Resources**: Earn 50+ combat-specific resources from defeated enemies
+- **Potion Usage**: Drink healing potions (25-300 HP) or buff potions (+15% damage, fire damage, poison damage, -15% enemy damage)
+- **HP System**: Player HP scales with Defense level (110-1090 HP), enemies have level-based HP
+- **Strategic Combat**: Use potions wisely with 10-second cooldowns, manage buffs lasting 10 battles each
 
 ## 🎮 How to Play
 
 1. **Create a Character**: Enter a username or use the random name generator
-2. **Choose a Skill**: Click on any skill card to start training
-3. **Watch the Progress**: See your character perform actions with ASCII animations
-4. **Level Up**: Gain experience and level up your skills (1-99)
-5. **Explore Content**: Unlock new animations and content every 10 levels
-6. **Take Breaks**: The game continues training offline at 80% efficiency
+2. **Choose a Skill**: Click on any skill card to start training (click "Stop" to pause)
+3. **Watch the Progress**: See your character perform actions with ASCII animations or engage in turn-based combat
+4. **Battle Enemies**: Combat skills feature unique enemy encounters with HP bars and combat logs
+5. **Use Potions**: Heal during combat or drink buff potions before battle for advantages
+6. **Earn Titles**: Unlock fantasy-themed titles as you level up (e.g., "Earthshaper", "Godslayer", "Dragon Hunter")
+7. **View Statistics**: Check detailed stats including enemies defeated, potions used, and time per skill
+8. **Gather Resources**: Collect ores, logs, potions, and combat drops as you train
+9. **Visit the Shop**: Buy upgrades with your resources to boost EXP gain (10%-100%)
+10. **Check Inventory**: View all your collected resources organized by category (includes combat resources!)
+11. **Customize Theme**: Switch between 4 terminal color themes
+12. **Level Up**: Gain experience and level up your skills (1-99)
+13. **Explore Content**: Unlock new animations, enemies, and resources every 10 levels
+14. **Take Breaks**: The game continues training offline at 80% efficiency
 
 ## 🛠️ Technical Details
 
@@ -100,12 +126,26 @@ This project was created with the assistance of **Claude 3.5 Sonnet** by Anthrop
 
 ### Features Implemented
 - Complete game loop with training mechanics
+- Turn-based combat system with 297 unique enemies
+- HP system with damage calculation and potion usage
+- Healing potions (4 types) and buff potions (4 types)
+- 74+ resources including combat drops
 - Multi-save system with UUID identification
+- 60 fantasy-themed achievement titles (10 per skill)
+- Comprehensive statistics tracking (time, resources, enemies defeated, potions used)
+- Resource gathering system (24 gathering resources + 50+ combat resources)
+- Upgrade shop with 28 progression items
+- Smart shop filtering based on active skill
+- Inventory management system with combat resource categories
+- Theme customization (4 color schemes)
 - Offline progression calculation
-- Custom modal dialogs
-- Progressive animation system
+- Custom modal dialogs including potion selection menus
+- Progressive animation system with combat UI
 - Auto-save and manual save functionality
 - Play time tracking across sessions
+- Stop/Start training toggle buttons
+- Dynamic title display based on current skill
+- Combat log and HP bars for real-time battle feedback
 
 ## 📜 License
 
@@ -114,12 +154,17 @@ This is a fan project inspired by RuneScape. RuneScape is a trademark of Jagex L
 ## 🎮 Future Ideas
 
 Potential features for future development:
-- Resource gathering and inventory system
-- Equipment and upgrades
-- Combat mechanics
-- Quests and achievements
-- More skills and content
-- Prestige system
+- ✅ ~~Resource gathering and inventory system~~ (Implemented!)
+- ✅ ~~Equipment and upgrades~~ (Implemented!)
+- ✅ ~~Multiple themes~~ (Implemented!)
+- ✅ ~~Statistics and achievements~~ (Implemented!)
+- ✅ ~~Combat mechanics with enemies~~ (Implemented!)
+- Boss encounters and special combat challenges
+- Quests and challenges
+- Trading/Market system
+- More skills (Fishing, Cooking, Smithing, Magic)
+- Prestige/Mastery system
+- Leaderboards
 
 ---
 

@@ -8,6 +8,10 @@ class Game {
         this.storage = storageAPI;
         this.state = gameState;
         
+        // Initialize combat manager
+        combatManager = new CombatManager(this.state, skillsSystem, upgradesManager, this);
+        this.combat = combatManager;
+        
         this.init();
     }
     
@@ -70,10 +74,20 @@ class Game {
                 }
                 this.loadGame();
                 break;
+            case 'theme':
+                this.showThemeSelectorFromMenu();
+                break;
             case 'about':
                 this.showAbout();
                 break;
         }
+    }
+    
+    /**
+     * Show the theme selector from main menu
+     */
+    showThemeSelectorFromMenu() {
+        modalManager.showThemeSelector();
     }
     
     /**
@@ -164,6 +178,12 @@ class Game {
                 // Set up training listeners
                 this.setupTrainingListeners();
                 
+                // Restore training state if there was an active skill
+                const currentState = this.state.get();
+                if (currentState.currentActivity) {
+                    this.updateTrainButtons(currentState.currentActivity);
+                }
+                
                 // Mark game as active
                 this.state.startPlaying();
                 
@@ -219,7 +239,7 @@ class Game {
         
         // Calculate offline gains
         const hoursOffline = timeDiff / 3600000; // Convert to hours
-        const actionsPerformed = Math.floor((timeDiff / 2000)); // One action every 2 seconds
+        const actionsPerformed = Math.floor((timeDiff / 1000)); // One action every second
         const baseExpPerAction = 20; // Average exp per action
         const offlineRate = 0.8; // 80% efficiency
         
@@ -231,6 +251,22 @@ class Game {
         // Add the experience
         const result = skillsSystem.addExp(skill, totalExpGained);
         this.state.update(`skills.${offlineData.trainingSkill}`, result.skill);
+        
+        // Calculate offline resources gathered
+        let resourcesGathered = {};
+        for (let i = 0; i < actionsPerformed; i++) {
+            const drop = resourcesManager.getResourceDrop(offlineData.trainingSkill, skill.level);
+            if (drop) {
+                if (!resourcesGathered[drop.type]) {
+                    resourcesGathered[drop.type] = { amount: 0, name: drop.displayName };
+                }
+                resourcesGathered[drop.type].amount += drop.amount;
+                
+                // Update state
+                const currentAmount = currentState.resources[drop.type] || 0;
+                this.state.update(`resources.${drop.type}`, currentAmount + drop.amount);
+            }
+        }
         
         const newLevel = result.skill.level;
         const levelsGained = newLevel - oldLevel;
@@ -246,6 +282,7 @@ class Game {
             oldLevel,
             newLevel,
             levelsGained,
+            resourcesGathered,
             () => {
                 callback();
                 // Auto-resume training the same skill
@@ -285,9 +322,81 @@ class Game {
         trainButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const skillKey = button.getAttribute('data-skill');
-                this.startTraining(skillKey);
+                const currentState = this.state.get();
+                
+                // Toggle training: stop if training this skill, start if not
+                if (currentState.currentActivity === skillKey) {
+                    this.stopTraining();
+                } else {
+                    this.startTraining(skillKey);
+                }
             });
         });
+        
+        // Hamburger menu toggle
+        const hamburgerBtn = document.getElementById('hamburger-menu');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        
+        if (hamburgerBtn && dropdownMenu) {
+            hamburgerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownMenu.classList.toggle('show');
+            });
+            
+            // Close dropdown when clicking outside (but not on notifications)
+            const closeMenuHandler = (e) => {
+                // Don't close if clicking on a notification
+                if (e.target.closest('.notification')) {
+                    return;
+                }
+                
+                if (!hamburgerBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('show');
+                }
+            };
+            
+            document.addEventListener('click', closeMenuHandler);
+            
+            // Close dropdown when clicking a menu item
+            const menuItems = dropdownMenu.querySelectorAll('.menu-item-btn');
+            menuItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    dropdownMenu.classList.remove('show');
+                });
+            });
+        }
+        
+        // Stats button listener
+        const statsButton = document.getElementById('stats-button');
+        if (statsButton) {
+            statsButton.addEventListener('click', () => {
+                this.showStatistics();
+            });
+        }
+        
+        // Shop button listener
+        const shopButton = document.getElementById('shop-button');
+        if (shopButton) {
+            shopButton.addEventListener('click', () => {
+                this.showShop();
+            });
+        }
+        
+        // Inventory button listener
+        const inventoryButton = document.getElementById('inventory-button');
+        if (inventoryButton) {
+            inventoryButton.addEventListener('click', () => {
+                this.showInventory();
+            });
+        }
+        
+        // Theme button listener
+        const themeButton = document.getElementById('theme-button');
+        if (themeButton) {
+            themeButton.addEventListener('click', () => {
+                this.showThemeSelector();
+            });
+        }
         
         // Save button listener
         const saveButton = document.getElementById('save-button');
@@ -305,6 +414,89 @@ class Game {
                 this.returnToMainMenu();
             });
         }
+    }
+    
+    /**
+     * Show the shop modal
+     */
+    showShop() {
+        const currentState = this.state.get();
+        modalManager.showShop(currentState, (upgradeKey) => {
+            this.purchaseUpgrade(upgradeKey);
+        });
+    }
+    
+    /**
+     * Purchase an upgrade
+     * @param {string} upgradeKey - The upgrade to purchase
+     */
+    purchaseUpgrade(upgradeKey) {
+        const currentState = this.state.get();
+        const upgrade = upgradesManager.getUpgrade(upgradeKey);
+        
+        if (!upgrade) return;
+        
+        // Check if can afford
+        if (!upgradesManager.canAfford(upgradeKey, currentState.resources)) {
+            this.showNotification('Cannot afford this upgrade!', '#ff6666');
+            return;
+        }
+        
+        // Check level requirement
+        const skill = currentState.skills[upgrade.skill];
+        if (!upgradesManager.meetsLevelRequirement(upgradeKey, skill.level)) {
+            this.showNotification(`Requires level ${upgrade.requiredLevel} ${skill.name}!`, '#ff6666');
+            return;
+        }
+        
+        // Check prerequisites
+        if (!upgradesManager.hasPrerequisites(upgradeKey, currentState.upgrades)) {
+            this.showNotification('Missing prerequisite upgrades!', '#ff6666');
+            return;
+        }
+        
+        // Deduct resources
+        for (const [resource, amount] of Object.entries(upgrade.cost)) {
+            const current = currentState.resources[resource] || 0;
+            this.state.update(`resources.${resource}`, current - amount);
+        }
+        
+        // Add upgrade to owned list
+        const newUpgrades = [...currentState.upgrades, upgradeKey];
+        this.state.update('upgrades', newUpgrades);
+        
+        // Save and notify
+        this.saveGame();
+        this.showNotification(`Purchased ${upgrade.name}!`, '#ffff00');
+        
+        // Refresh shop without closing modal
+        this.showShop();
+    }
+    
+    /**
+     * Show the statistics modal
+     */
+    showStatistics() {
+        const currentState = this.state.get();
+        modalManager.showStatistics(currentState);
+    }
+    
+    /**
+     * Show the inventory modal
+     */
+    showInventory() {
+        const currentState = this.state.get();
+        modalManager.showInventory(currentState.resources);
+    }
+    
+    /**
+     * Show the theme selector modal
+     */
+    showThemeSelector() {
+        modalManager.showThemeSelector(() => {
+            // Theme changed, no need to refresh
+            this.showNotification('Theme changed!');
+        });
     }
     
     /**
@@ -344,11 +536,29 @@ class Game {
             return;
         }
         
+        // If switching between combat skills, reset combat
+        const currentActivity = currentState.currentActivity;
+        if (currentActivity && currentActivity !== skillKey) {
+            const currentIsCombat = this.combat.isCombatSkill(currentActivity);
+            const newIsCombat = this.combat.isCombatSkill(skillKey);
+            
+            // If both are combat skills but different, reset combat
+            if (currentIsCombat && newIsCombat) {
+                this.state.update('combat.inCombat', false);
+            }
+        }
+        
         // Update current activity
         this.state.update('currentActivity', skillKey);
         
         // Update animation with current level
         this.ui.updateAnimation(skillKey, skill.level);
+        
+        // Update player title
+        this.ui.updatePlayerTitle(skillKey, skill.level);
+        
+        // Update all train buttons to show stop button for active skill
+        this.updateTrainButtons(skillKey);
         
         // Simulate training action (gain exp every 2 seconds)
         if (this.trainingInterval) {
@@ -357,7 +567,56 @@ class Game {
         
         this.trainingInterval = setInterval(() => {
             this.performTrainingAction(skillKey);
-        }, 2000);
+        }, 1000); // One action per second
+    }
+    
+    /**
+     * Stop training the current skill
+     */
+    stopTraining() {
+        // Clear training interval
+        if (this.trainingInterval) {
+            clearInterval(this.trainingInterval);
+            this.trainingInterval = null;
+        }
+        
+        // Clear current activity
+        this.state.update('currentActivity', null);
+        
+        // Clear animation area
+        const animationArea = document.getElementById('animation-area');
+        if (animationArea) {
+            animationArea.innerHTML = '<p style="color: var(--color-primary-dim);">> Select a skill to start training...</p>';
+        }
+        
+        // Clear player title
+        this.ui.updatePlayerTitle(null, null);
+        
+        // Reset all train buttons
+        this.updateTrainButtons(null);
+        
+        // Show notification
+        this.showNotification('Training stopped', 'var(--color-primary-dim)');
+    }
+    
+    /**
+     * Update train buttons to show Train/Stop based on active skill
+     * @param {string|null} activeSkill - The currently active skill, or null
+     */
+    updateTrainButtons(activeSkill) {
+        const trainButtons = document.querySelectorAll('.train-button');
+        
+        trainButtons.forEach(button => {
+            const skillKey = button.getAttribute('data-skill');
+            
+            if (skillKey === activeSkill) {
+                button.textContent = 'Stop';
+                button.style.backgroundColor = '#ff6666';
+            } else {
+                button.textContent = 'Train';
+                button.style.backgroundColor = '';
+            }
+        });
     }
     
     /**
@@ -368,8 +627,47 @@ class Game {
         const currentState = this.state.get();
         const skill = currentState.skills[skillKey];
         
+        // Check if this is a combat skill
+        if (this.combat.isCombatSkill(skillKey)) {
+            // Handle combat training
+            const combat = currentState.combat;
+            
+            // Check if regenerating
+            if (combat.isRegenerating) {
+                this.combat.updateRegeneration();
+                this.ui.updateSkillCards(currentState.skills);
+                return;
+            }
+            
+            // Start new combat if not already in combat
+            if (!combat.inCombat) {
+                const started = this.combat.startCombat(skillKey);
+                if (!started) {
+                    console.error('Failed to start combat');
+                    return;
+                }
+                // Update UI to show initial combat state before first turn
+                this.ui.updateCombatDisplay();
+                this.ui.updateSkillCards(currentState.skills);
+                return; // Don't process turn on the same tick as starting combat
+            }
+            
+            // Process combat turn
+            this.combat.processCombatTurn();
+            
+            // Update UI
+            this.ui.updateSkillCards(currentState.skills);
+            this.ui.updateCombatDisplay();
+            return;
+        }
+        
+        // Non-combat skills: Original resource gathering logic
         // Calculate exp gain (random between 10-30)
-        const expGain = Math.floor(Math.random() * 21) + 10;
+        const baseExpGain = Math.floor(Math.random() * 21) + 10;
+        
+        // Apply upgrade bonuses
+        const bonus = upgradesManager.getTotalBonus(skillKey, currentState.upgrades);
+        const expGain = Math.floor(baseExpGain * (1 + bonus));
         
         // Add exp to skill
         const result = skillsSystem.addExp(skill, expGain);
@@ -378,20 +676,36 @@ class Game {
         this.state.update(`skills.${skillKey}`, result.skill);
         this.state.update('stats.totalActions', currentState.stats.totalActions + 1);
         
-        // Check for level up
-        if (result.leveledUp) {
-            this.showNotification(`${skill.name} leveled up! Level ${result.newLevel}!`, '#ffff00');
+        // Track skill training time (1 second per action)
+        const currentSkillTime = currentState.stats.skillTime[skillKey] || 0;
+        this.state.update(`stats.skillTime.${skillKey}`, currentSkillTime + 1000);
+        
+        // Check for resource drops
+        const resourceDrop = resourcesManager.getResourceDrop(skillKey, result.skill.level);
+        if (resourceDrop) {
+            const currentAmount = currentState.resources[resourceDrop.type] || 0;
+            this.state.update(`resources.${resourceDrop.type}`, currentAmount + resourceDrop.amount);
+            this.showNotification(`+${resourceDrop.amount} ${resourceDrop.displayName}`, 'var(--color-primary-dim)');
         }
         
-        // Refresh the game screen
-        this.ui.showGameScreen(this.state.get());
-        this.setupTrainingListeners();
+        // Check for level up
+        if (result.leveledUp) {
+            const newTitle = achievementsManager.getTitle(skillKey, result.newLevel);
+            this.showNotification(`${skill.name} leveled up! Level ${result.newLevel}! [${newTitle}]`, '#ffff00');
+            // Update title display
+            this.ui.updatePlayerTitle(skillKey, result.newLevel);
+        }
         
-        // Restore animation with updated level
-        const currentActivity = this.state.get().currentActivity;
-        if (currentActivity) {
-            const currentSkill = this.state.get().skills[currentActivity];
-            this.ui.updateAnimation(currentActivity, currentSkill.level);
+        // Update only the skill cards, not the entire screen
+        this.ui.updateSkillCards(this.state.get().skills);
+        
+        // Update animation if level changed (new animation tier)
+        if (result.leveledUp) {
+            const currentActivity = this.state.get().currentActivity;
+            if (currentActivity) {
+                const currentSkill = this.state.get().skills[currentActivity];
+                this.ui.updateAnimation(currentActivity, currentSkill.level);
+            }
         }
     }
     
@@ -435,6 +749,11 @@ class Game {
             animation: slideIn 0.3s ease-out;
         `;
         notification.textContent = message;
+        
+        // Prevent clicks on notification from closing menu
+        notification.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
         
         document.body.appendChild(notification);
         
