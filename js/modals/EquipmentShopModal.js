@@ -240,27 +240,20 @@ class EquipmentShopModal extends BaseModal {
      * @returns {string} - HTML for buttons
      */
     generateItemButtons(item, flags) {
-        console.log('generateItemButtons called for:', item.name, 'flags:', flags);
-        
         if (flags.isEquipped) {
-            console.log('  -> Returning UNEQUIP button');
             return `<button class="equipment-btn unequip-btn" data-item-key="${flags.itemKey}">Unequip</button>`;
         }
 
         if (!flags.isUnlocked) {
             if (!flags.meetsRequirement) {
-                console.log('  -> Returning LEVEL REQUIRED button');
                 return '<button class="equipment-btn disabled-btn" disabled>Level Required</button>';
             }
             if (!flags.canAfford) {
-                console.log('  -> Returning NOT ENOUGH GOLD button');
                 return '<button class="equipment-btn disabled-btn" disabled>Not Enough Gold</button>';
             }
-            console.log('  -> Returning BUY button');
             return `<button class="equipment-btn buy-btn" data-item-key="${flags.itemKey}">Buy</button>`;
         }
 
-        console.log('  -> Returning EQUIP button');
         return `<button class="equipment-btn equip-btn" data-item-key="${flags.itemKey}">Equip</button>`;
     }
 

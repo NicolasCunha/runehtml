@@ -694,6 +694,12 @@ body {
     font-size: 10px;
     line-height: 1.8;
     text-align: center;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.modal-content::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .modal-content p {
@@ -1106,6 +1112,12 @@ body {
     padding: 10px;
     max-height: 120px;
     overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.combat-log::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .log-title {
@@ -1136,6 +1148,12 @@ body {
 .equipment-shop-container {
     max-height: 600px;
     overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.equipment-shop-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .gold-display {

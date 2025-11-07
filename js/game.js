@@ -786,6 +786,7 @@ class Game {
         if (this.combat.isCombatSkill(skillKey)) {
             // Handle combat training
             const combat = currentState.combat;
+            this.state.update('combat.skill', skillKey);
             
             // Check if regenerating
             if (combat.isRegenerating) {

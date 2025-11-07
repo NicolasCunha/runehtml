@@ -62,7 +62,7 @@ class CharmsManager {
                 description: 'A basic enchantment for chopping trees',
                 skill: 'woodcutting',
                 bonus: 0.10,
-                cost: { copper: 40, tin: 40 },
+                cost: { normal: 50, oak: 30 },
                 requiredLevel: 1,
                 category: 'enchantment'
             },
@@ -71,7 +71,7 @@ class CharmsManager {
                 description: 'A sharp enchantment for faster woodcutting',
                 skill: 'woodcutting',
                 bonus: 0.25,
-                cost: { iron: 50, normal: 100 },
+                cost: { oak: 80, willow: 50 },
                 requiredLevel: 20,
                 requires: ['bronzeAxe'],
                 category: 'enchantment'
@@ -81,7 +81,7 @@ class CharmsManager {
                 description: 'An excellent enchantment for expert lumberjacks',
                 skill: 'woodcutting',
                 bonus: 0.50,
-                cost: { iron: 100, oak: 150 },
+                cost: { willow: 120, maple: 80 },
                 requiredLevel: 40,
                 requires: ['ironAxe'],
                 category: 'enchantment'
@@ -91,7 +91,7 @@ class CharmsManager {
                 description: 'A legendary enchantment of immense cutting power',
                 skill: 'woodcutting',
                 bonus: 0.75,
-                cost: { mithril: 80, maple: 200 },
+                cost: { maple: 150, yew: 100 },
                 requiredLevel: 60,
                 requires: ['steelAxe'],
                 category: 'enchantment'
@@ -101,7 +101,7 @@ class CharmsManager {
                 description: 'The finest enchantment ever crafted',
                 skill: 'woodcutting',
                 bonus: 1.0,
-                cost: { runite: 40, magic: 100 },
+                cost: { yew: 120, magic: 80 },
                 requiredLevel: 80,
                 requires: ['mithrilAxe'],
                 category: 'enchantment'
@@ -113,7 +113,7 @@ class CharmsManager {
                 description: 'Simple enchantment for brewing potions',
                 skill: 'chemistry',
                 bonus: 0.10,
-                cost: { basic: 20, copper: 30 },
+                cost: { basic: 30, health: 20 },
                 requiredLevel: 1,
                 category: 'enchantment'
             },
@@ -122,7 +122,7 @@ class CharmsManager {
                 description: 'Professional enchantment for alchemists',
                 skill: 'chemistry',
                 bonus: 0.30,
-                cost: { health: 30, mana: 30, iron: 50 },
+                cost: { health: 50, mana: 40, energy: 30 },
                 requiredLevel: 25,
                 requires: ['basicKit'],
                 category: 'enchantment'
@@ -132,7 +132,7 @@ class CharmsManager {
                 description: 'The ultimate enchantment for magical brewing',
                 skill: 'chemistry',
                 bonus: 0.60,
-                cost: { energy: 50, fire: 30, gold: 80 },
+                cost: { energy: 60, poison: 50, fire: 40 },
                 requiredLevel: 50,
                 requires: ['advancedKit'],
                 category: 'enchantment'
@@ -142,7 +142,7 @@ class CharmsManager {
                 description: 'Mystical enchantment blessed by ancient powers',
                 skill: 'chemistry',
                 bonus: 1.0,
-                cost: { divine: 40, frost: 40, mithril: 100 },
+                cost: { fire: 60, frost: 60, divine: 50 },
                 requiredLevel: 75,
                 requires: ['masterKit'],
                 category: 'enchantment'

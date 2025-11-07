@@ -234,7 +234,8 @@ class CombatManager {
         // Calculate EXP reward
         const baseExp = enemy.level * 10;
         const charmBonusMultiplier = 1 + (this.charms.getTotalBonus(combat.skill, this.state.get().charms) / 100);
-        const expGained = Math.floor(baseExp * charmBonusMultiplier);
+        const levelMultiplier = 1 + (this.state.get().skills[combat.skill].level * 0.01);
+        const expGained = Math.floor(baseExp * charmBonusMultiplier * levelMultiplier);
         
         // Award EXP
         const skill = this.state.get().skills[combat.skill];

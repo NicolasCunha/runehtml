@@ -20,7 +20,8 @@ class Equipment {
             'crossbow',   // High damage ranged
             'staff',      // Magic/chemistry
             'wand',       // Fast magic
-            'scythe'      // Woodcutting/mining
+            'scythe',     // Woodcutting/mining
+            'pickaxe'     // Mining/combat
         ];
         
         // Define all equipment items
@@ -150,6 +151,10 @@ class Equipment {
                 bonuses.mining = tierLevel * 3;
                 bonuses.woodcutting = tierLevel * 3;
                 break;
+            case 'pickaxe':
+                bonuses.melee = baseMeleeBonus + tierLevel;
+                bonuses.mining = tierLevel * 4;
+                break;
         }
         
         return bonuses;
@@ -249,7 +254,8 @@ class Equipment {
             crossbow: '⇶',
             staff: '⌬',
             wand: '✦',
-            scythe: '⚔'
+            scythe: '⚔',
+            pickaxe: '⛏'
         };
         return icons[type] || '⚔';
     }
