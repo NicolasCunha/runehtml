@@ -30,8 +30,8 @@ No installation required - just open the link and start playing!
 - **Fantasy Titles**: Earn 10 unique titles per skill based on your level (60 total titles)
 - **Statistics Tracking**: Detailed stats including enemies defeated, potions used, and combat achievements
 - **Resource Gathering**: Collect 74+ different resources (ores, logs, potions, combat drops)
-- **Upgrade Shop**: Purchase 28 upgrades to boost your training efficiency (10%-100% bonus)
-- **Smart Shopping**: Shop automatically filters to show only your current skill's upgrades
+- **Charm Shop**: Purchase 28 magical charms to boost your training efficiency (10%-100% bonus)
+- **Smart Shopping**: Shop automatically filters to show only your current skill's charms
 - **Inventory System**: Track all your collected resources organized by category
 - **4 Color Themes**: Choose between Green, Amber, Blue, or Red terminal themes
 - **Offline Training**: Earn 80% experience while away from the game
@@ -72,7 +72,7 @@ Each skill features multiple tiers of content and resources:
 6. **Earn Titles**: Unlock fantasy-themed titles as you level up (e.g., "Earthshaper", "Godslayer", "Dragon Hunter")
 7. **View Statistics**: Check detailed stats including enemies defeated, potions used, and time per skill
 8. **Gather Resources**: Collect ores, logs, potions, and combat drops as you train
-9. **Visit the Shop**: Buy upgrades with your resources to boost EXP gain (10%-100%)
+9. **Visit the Charm Shop**: Buy magical charms with your resources to boost EXP gain (10%-100%)
 10. **Check Inventory**: View all your collected resources organized by category (includes combat resources!)
 11. **Customize Theme**: Switch between 4 terminal color themes
 12. **Level Up**: Gain experience and level up your skills (1-99)
@@ -134,7 +134,7 @@ This project was created with the assistance of **Claude 3.5 Sonnet** by Anthrop
 - 60 fantasy-themed achievement titles (10 per skill)
 - Comprehensive statistics tracking (time, resources, enemies defeated, potions used)
 - Resource gathering system (24 gathering resources + 50+ combat resources)
-- Upgrade shop with 28 progression items
+- Charm shop with 28 magical progression items
 - Smart shop filtering based on active skill
 - Inventory management system with combat resource categories
 - Theme customization (4 color schemes)
@@ -155,7 +155,7 @@ This is a fan project inspired by RuneScape. RuneScape is a trademark of Jagex L
 
 Potential features for future development:
 - ✅ ~~Resource gathering and inventory system~~ (Implemented!)
-- ✅ ~~Equipment and upgrades~~ (Implemented!)
+- ✅ ~~Equipment and charms~~ (Implemented!)
 - ✅ ~~Multiple themes~~ (Implemented!)
 - ✅ ~~Statistics and achievements~~ (Implemented!)
 - ✅ ~~Combat mechanics with enemies~~ (Implemented!)

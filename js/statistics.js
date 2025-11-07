@@ -128,33 +128,43 @@ class StatisticsManager {
     }
     
     /**
-     * Calculate upgrade statistics
-     * @param {Array} upgrades - Upgrades array from game state
+     * Calculate charm statistics
+     * @param {Array} upgrades - Upgrades array from game state (kept for backward compatibility)
      * @param {Object} skills - Skills object for calculating total bonus
-     * @returns {Object} - Upgrade stats
+     * @returns {Object} - Charm stats
      */
-    getUpgradeStats(upgrades, skills) {
+    getCharmStats(upgrades, skills) {
         const stats = {
             total: upgrades.length,
             bySkill: {}
         };
         
-        // Count upgrades per skill and calculate bonuses
+        // Count charms per skill and calculate bonuses
         for (const [skillKey, skill] of Object.entries(skills)) {
-            const bonus = upgradesManager.getTotalBonus(skillKey, upgrades);
-            const upgradeCount = upgrades.filter(u => {
-                const upgrade = upgradesManager.getUpgrade(u);
-                return upgrade && upgrade.skill === skillKey;
+            const charmBonus = charmsManager.getTotalBonus(skillKey, upgrades);
+            const charmCount = upgrades.filter(u => {
+                const charm = charmsManager.getCharm(u);
+                return charm && charm.skill === skillKey;
             }).length;
             
             stats.bySkill[skillKey] = {
                 name: skill.name,
-                count: upgradeCount,
-                bonus: Math.round(bonus * 100)
+                count: charmCount,
+                bonus: Math.round(charmBonus * 100)
             };
         }
         
         return stats;
+    }
+
+    /**
+     * Backward compatibility method for getCharmStats
+     * @param {Array} upgrades - Upgrades array from game state
+     * @param {Object} skills - Skills object
+     * @returns {Object} - Charm stats
+     */
+    getUpgradeStats(upgrades, skills) {
+        return this.getCharmStats(upgrades, skills);
     }
     
     /**

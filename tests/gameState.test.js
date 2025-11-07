@@ -29,7 +29,11 @@ class GameState {
       },
       statistics: {
         enemiesDefeated: 0,
-        potionsUsed: 0
+        meleeEnemiesDefeated: 0,
+        rangedEnemiesDefeated: 0,
+        defenseEnemiesDefeated: 0,
+        potionsUsed: 0,
+        totalGoldEarned: 0
       }
     };
   }

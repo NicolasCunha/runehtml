@@ -9,9 +9,23 @@ class InventoryModal extends BaseModal {
     /**
      * Show the inventory modal with resources organized by category
      * @param {Object} resourcesData - The player's resources object
+     * @param {Object} currency - The player's currency object
      */
-    showInventory(resourcesData) {
+    showInventory(resourcesData, currency = null) {
         const inventory = resourcesManager.getInventoryDisplay(resourcesData);
+        
+        // Add gold display at the top if currency exists
+        let goldHTML = '';
+        if (currency && currency.gold !== undefined) {
+            goldHTML = `
+                <div style="background: var(--color-bg-dark); border: 1px solid var(--color-primary-dim); 
+                    padding: 10px; margin-bottom: 15px; text-align: center;">
+                    <span style="color: #ffd700; font-size: 1.1em; font-weight: bold;">
+                        💰 Gold: ${currency.gold.toLocaleString()}
+                    </span>
+                </div>
+            `;
+        }
         
         let inventoryHTML = '';
         if (inventory.length === 0) {
@@ -27,6 +41,7 @@ class InventoryModal extends BaseModal {
                         <h2>> INVENTORY</h2>
                     </div>
                     <div class="modal-content" style="max-height: 500px; overflow-y: auto;">
+                        ${goldHTML}
                         ${inventoryHTML}
                     </div>
                     <div class="modal-buttons">
@@ -83,17 +98,11 @@ class InventoryModal extends BaseModal {
             html += this.buildCategoryHTML('🧪 Potions', potions);
         }
         
-        if (meleeResources.length > 0) {
-            html += this.buildCategoryHTML('⚔️ Melee Resources', meleeResources);
-        }
-        
-        if (rangedResources.length > 0) {
-            html += this.buildCategoryHTML('🏹 Ranged Resources', rangedResources);
-        }
-        
-        if (defenseResources.length > 0) {
+        // Combine all combat resources under one "Loot" category
+        const allLoot = [...meleeResources, ...rangedResources, ...defenseResources];
+        if (allLoot.length > 0) {
             // Don't add <br> after last category
-            html += this.buildCategoryHTML('🛡 Defense Resources', defenseResources, false);
+            html += this.buildCategoryHTML('⚔️ Loot', allLoot, false);
         }
         
         return html;

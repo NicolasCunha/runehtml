@@ -2,12 +2,12 @@
  * Handles all training-related logic and interactions
  */
 class TrainingController {
-    constructor(gameState, ui, skillsSystem, resourcesManager, upgradesManager, achievementsManager, combatManager) {
-        this.state = gameState;
+    constructor(gameState, ui, skillsSystem, resourcesManager, charmsManager, achievementsManager, combatManager) {
+        this.gameState = gameState;
         this.ui = ui;
         this.skillsSystem = skillsSystem;
         this.resourcesManager = resourcesManager;
-        this.upgradesManager = upgradesManager;
+        this.charmsManager = charmsManager;
         this.achievementsManager = achievementsManager;
         this.combat = combatManager;
         
@@ -264,9 +264,9 @@ class TrainingController {
         // Calculate exp gain (random between 10-30)
         const baseExpGain = Math.floor(Math.random() * 21) + 10;
         
-        // Apply upgrade bonuses
-        const bonus = this.upgradesManager.getTotalBonus(skillKey, currentState.upgrades);
-        const expGain = Math.floor(baseExpGain * (1 + bonus));
+        // Apply charm bonuses
+        const charmBonus = this.charmsManager.getTotalBonus(skillKey, currentState.upgrades);
+        const expGain = Math.floor(baseExpGain * (1 + charmBonus));
         
         // Add exp to skill
         const result = this.skillsSystem.addExp(skill, expGain);

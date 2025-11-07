@@ -35,6 +35,12 @@ class CombatManager {
     const variance = Math.floor(Math.random() * 5) - 2;
     return Math.max(1, Math.floor(baseDamage + variance));
   }
+
+  calculateGoldReward(enemyLevel) {
+    const baseGold = enemyLevel * 5;
+    const bonusGold = Math.floor(Math.random() * (enemyLevel * 3 + 1));
+    return baseGold + bonusGold;
+  }
 }
 
 describe('CombatManager', () => {
@@ -123,4 +129,42 @@ describe('CombatManager', () => {
       expect(combatManager.calculateEnemyDamage(1, 99, 100)).toBeGreaterThanOrEqual(1);
     });
   });
+
+  describe('calculateGoldReward', () => {
+    test('should return gold for level 1 enemy', () => {
+      const gold = combatManager.calculateGoldReward(1);
+      expect(gold).toBeGreaterThanOrEqual(5); // baseGold = 1 * 5 = 5
+      expect(gold).toBeLessThanOrEqual(8);   // 5 + random(0-3)
+    });
+
+    test('should scale gold with enemy level', () => {
+      const gold10 = combatManager.calculateGoldReward(10);
+      const gold20 = combatManager.calculateGoldReward(20);
+      
+      // Level 10: 50 base + 0-30 bonus = 50-80
+      expect(gold10).toBeGreaterThanOrEqual(50);
+      expect(gold10).toBeLessThanOrEqual(80);
+      
+      // Level 20: 100 base + 0-60 bonus = 100-160
+      expect(gold20).toBeGreaterThanOrEqual(100);
+      expect(gold20).toBeLessThanOrEqual(160);
+    });
+
+    test('should always give at least base gold', () => {
+      const level = 50;
+      const gold = combatManager.calculateGoldReward(level);
+      expect(gold).toBeGreaterThanOrEqual(level * 5);
+    });
+
+    test('should give correct maximum gold', () => {
+      const level = 99;
+      const baseGold = level * 5; // 495
+      const maxBonus = level * 3;  // 297
+      const gold = combatManager.calculateGoldReward(level);
+      
+      expect(gold).toBeGreaterThanOrEqual(baseGold);
+      expect(gold).toBeLessThanOrEqual(baseGold + maxBonus);
+    });
+  });
 });
+

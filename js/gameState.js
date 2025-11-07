@@ -54,6 +54,9 @@ class GameState {
                 divine: 0,
                 life: 0
             },
+            currency: {
+                gold: 100 // Starting gold for equipment purchases
+            },
             upgrades: [],
             stats: {
                 totalActions: 0,
@@ -86,7 +89,18 @@ class GameState {
                 meleeEnemiesDefeated: 0,
                 rangedEnemiesDefeated: 0,
                 defenseEnemiesDefeated: 0,
-                potionsUsed: 0
+                potionsUsed: 0,
+                totalGoldEarned: 0
+            },
+            equipment: {
+                equipped: {
+                    weapon: null,
+                    offhand: null,
+                    helmet: null,
+                    body: null,
+                    legs: null
+                },
+                unlocked: []  // Array of unlocked equipment item keys
             }
         };
     }

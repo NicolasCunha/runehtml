@@ -43,10 +43,42 @@ class ThemeManager {
                 primaryDark: '#9333ea',
                 glow: 'rgba(217, 70, 239, 0.6)',
                 glowStrong: 'rgba(192, 132, 252, 0.9)'
+            },
+            mint: {
+                name: 'Cool Mint',
+                primary: '#3affb3',
+                primaryDim: '#66ffcc',
+                primaryDark: '#00cc88',
+                glow: 'rgba(58, 255, 179, 0.5)',
+                glowStrong: 'rgba(58, 255, 179, 0.8)'
+            },
+            pink: {
+                name: 'Bubblegum Pink',
+                primary: '#ff69b4',
+                primaryDim: '#ff85c1',
+                primaryDark: '#cc4488',
+                glow: 'rgba(255, 105, 180, 0.5)',
+                glowStrong: 'rgba(255, 105, 180, 0.8)'
+            },
+            gold: {
+                name: 'Golden Hour',
+                primary: '#ffd700',
+                primaryDim: '#ffed4e',
+                primaryDark: '#ccaa00',
+                glow: 'rgba(255, 215, 0, 0.5)',
+                glowStrong: 'rgba(255, 215, 0, 0.8)'
+            },
+            violet: {
+                name: 'Electric Violet',
+                primary: '#9d00ff',
+                primaryDim: '#b84dff',
+                primaryDark: '#7300cc',
+                glow: 'rgba(157, 0, 255, 0.5)',
+                glowStrong: 'rgba(157, 0, 255, 0.8)'
             }
         };
         
-        this.currentTheme = 'green';
+        this.currentTheme = null; // Will be set by loadSavedTheme()
     }
     
     /**

@@ -2,10 +2,10 @@
 // Turn-based battle system with HP, damage, potions, and buffs
 
 class CombatManager {
-    constructor(gameState, skillsSystem, upgradesManager, game) {
+    constructor(gameState, skillsSystem, charmsManager, game) {
         this.state = gameState;
         this.skills = skillsSystem;
-        this.upgrades = upgradesManager;
+        this.charms = charmsManager;
         this.game = game;
         this.potionCooldownDuration = 10000; // 10 seconds in milliseconds
     }
@@ -73,11 +73,15 @@ class CombatManager {
 
         // Player's turn
         if (combat.turn === 'player') {
-            const damage = this.calculatePlayerDamage();
+            const damageCalcResult = this.calculatePlayerDamage();
+            const initialDamage = damageCalcResult.initialDamage;
+            const charmBonus = damageCalcResult.charmBonus;
+            const weaponDamageBonus = damageCalcResult.weaponDamageBonus;
+            const damage = damageCalcResult.damage;
             const newEnemyHP = Math.max(0, combat.currentEnemy.currentHP - damage);
             
             // Add to combat log
-            this.addToCombatLog(`You hit ${combat.currentEnemy.name} for ${damage} damage`);
+            this.addToCombatLog(`You hit ${combat.currentEnemy.name} for ${damage} (${initialDamage} + ${charmBonus} + ${weaponDamageBonus}) damage`);
 
             // Update enemy with new HP
             const updatedEnemy = {
@@ -94,9 +98,7 @@ class CombatManager {
 
             // Switch to enemy turn
             this.state.update('combat.turn', 'enemy');
-        }
-        // Enemy's turn
-        else {
+        } else {
             const damage = this.calculateEnemyDamage();
             const newPlayerHP = Math.max(0, combat.playerCurrentHP - damage);
             
@@ -128,10 +130,19 @@ class CombatManager {
         
         // Base damage
         let baseDamage = 10 + (attackLevel * 0.5);
-        
-        // Weapon bonus from upgrades
-        const weaponBonus = this.upgrades.getTotalBonus(attackSkill, this.state.get().upgrades) / 100;
-        baseDamage *= (1 + weaponBonus);
+        const initialDamage = baseDamage;
+
+        // Charm bonus from owned charms
+        const charmBonus = this.charms.getTotalBonus(attackSkill, this.state.get().upgrades) / 100;
+        baseDamage *= (1 + charmBonus);
+
+        // Weapon damage bonus from equipped weapon
+        const equippedItems = this.state.get().equipment?.equipped || {};
+        const equippedWeapon = equippedItems.weapon;
+        if (equippedWeapon && equippedWeapon.bonuses) {
+            const weaponDamageBonus = equippedWeapon.bonuses[attackSkill] || 0;
+            baseDamage += weaponDamageBonus;
+        }
         
         // Active buff bonuses
         if (combat.activeBuff) {
@@ -148,10 +159,15 @@ class CombatManager {
             }
         }
         
-        // Random variance (-3 to +3)
-        const variance = Math.floor(Math.random() * 7) - 3;
+        const result = {
+            initialDamage : initialDamage,
+            baseDamage: baseDamage,
+            damage : baseDamage,
+            charmBonus : charmBonus,
+            weaponDamageBonus : (equippedWeapon && equippedWeapon.bonuses) ? (equippedWeapon.bonuses[attackSkill] || 0) : 0
+        }
         
-        return Math.max(1, Math.floor(baseDamage + variance));
+        return result;
     }
 
     /**
@@ -170,9 +186,17 @@ class CombatManager {
         const defenseReduction = 1 - (defenseLevel * 0.003);
         baseDamage *= Math.max(0.5, defenseReduction); // Min 50% damage even at 99 defense
         
-        // Armor bonus from upgrades
-        const armorBonus = this.upgrades.getTotalBonus('defense', this.state.get().upgrades) / 100;
-        baseDamage *= (1 - armorBonus);
+        // Defense charm bonus from owned charms
+        const defenseCharmBonus = this.charms.getTotalBonus('defense', this.state.get().upgrades) / 100;
+        baseDamage *= (1 - defenseCharmBonus);
+        
+        // Armor defense bonus from equipped armor
+        const equippedItems = this.state.get().equipment?.equipped || {};
+        const equipmentBonuses = equipment.calculateTotalBonuses(equippedItems);
+        const armorDefenseBonus = equipmentBonuses.defense || 0;
+        // Convert armor defense bonus to damage reduction (each point reduces damage by 0.5%)
+        const armorReduction = 1 - (armorDefenseBonus * 0.005);
+        baseDamage *= Math.max(0.1, armorReduction); // Min 10% damage even with high armor
         
         // Frost potion reduces enemy damage
         if (combat.activeBuff && combat.activeBuff.type === 'frost') {
@@ -193,9 +217,9 @@ class CombatManager {
         const defenseLevel = this.state.get().skills.defense.level;
         let maxHP = 100 + (defenseLevel * 10);
         
-        // Armor bonus from defense upgrades
-        const armorBonus = this.upgrades.getTotalBonus('defense', this.state.get().upgrades);
-        maxHP += armorBonus * 5; // Each 10% defense bonus adds 50 HP
+        // Defense charm bonus for HP
+        const defenseCharmBonus = this.charms.getTotalBonus('defense', this.state.get().upgrades);
+        maxHP += defenseCharmBonus * 5; // Each 10% defense charm bonus adds 50 HP
         
         return maxHP;
     }
@@ -209,8 +233,8 @@ class CombatManager {
         
         // Calculate EXP reward
         const baseExp = enemy.level * 10;
-        const bonusMultiplier = 1 + (this.upgrades.getTotalBonus(combat.skill, this.state.get().upgrades) / 100);
-        const expGained = Math.floor(baseExp * bonusMultiplier);
+        const charmBonusMultiplier = 1 + (this.charms.getTotalBonus(combat.skill, this.state.get().upgrades) / 100);
+        const expGained = Math.floor(baseExp * charmBonusMultiplier);
         
         // Award EXP
         const skill = this.state.get().skills[combat.skill];
@@ -227,6 +251,8 @@ class CombatManager {
         
         // Award 2 random resource drops from enemy
         const drops = enemy.drops;
+        const lootMessages = [];
+        
         for (let i = 0; i < 2; i++) {
             const randomDrop = drops[Math.floor(Math.random() * drops.length)];
             const amount = Math.floor(Math.random() * 3) + 1; // 1-3 of each resource
@@ -236,7 +262,22 @@ class CombatManager {
             
             const displayName = combatResourcesManager.getDisplayName(randomDrop);
             this.addToCombatLog(`+${amount} ${displayName}`);
+            lootMessages.push(`${amount} ${displayName}`);
         }
+        
+        // Award gold based on enemy level (scales with difficulty)
+        // Formula: (level * 5) + random(0 to level * 3)
+        const baseGold = enemy.level * 5;
+        const bonusGold = Math.floor(Math.random() * (enemy.level * 3 + 1));
+        const goldEarned = baseGold + bonusGold;
+        
+        const currentGold = this.state.get().currency?.gold || 0;
+        this.state.update('currency.gold', currentGold + goldEarned);
+        this.addToCombatLog(`+${goldEarned} Gold`);
+        lootMessages.push(`${goldEarned} Gold`);
+        
+        // Show combined loot notification
+        this.game.showNotification(`Victory! Gained: ${lootMessages.join(', ')}`, 'var(--color-primary-dim)');
         
         // Add victory message
         this.addToCombatLog(`Victory! Gained ${expGained} EXP`);
@@ -245,6 +286,7 @@ class CombatManager {
         const stats = this.state.get().statistics || {};
         stats.enemiesDefeated = (stats.enemiesDefeated || 0) + 1;
         stats[`${combat.skill}EnemiesDefeated`] = (stats[`${combat.skill}EnemiesDefeated`] || 0) + 1;
+        stats.totalGoldEarned = (stats.totalGoldEarned || 0) + goldEarned;
         this.state.update('statistics', stats);
         
         // Consume buff charge if active

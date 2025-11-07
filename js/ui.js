@@ -30,7 +30,7 @@ class UIManager {
      * Used when returning to the main menu
      */
     showMainMenu() {
-        this.elements.mainMenu.style.display = 'block';
+        this.elements.mainMenu.style.display = 'flex';
         this.elements.logo.style.display = 'block';
         this.elements.gameArea.style.display = 'none';
         
@@ -134,28 +134,31 @@ class UIManager {
                         <button id="hamburger-menu" class="hamburger-button" title="Menu">☰</button>
                         <div id="dropdown-menu" class="dropdown-menu">
                             <button id="stats-button" class="menu-item-btn">📊 Stats</button>
-                            <button id="shop-button" class="menu-item-btn">🛒 Shop</button>
+                            <button id="shop-button" class="menu-item-btn">� Charms</button>
+                            <button id="equipment-button" class="menu-item-btn">⚔️ Equipment</button>
                             <button id="inventory-button" class="menu-item-btn">📦 Inventory</button>
                             <button id="theme-button" class="menu-item-btn">🎨 Theme</button>
+                            <button id="reset-skills-button" class="menu-item-btn">🔄 Reset Skills</button>
                             <button id="save-button" class="menu-item-btn">💾 Save Game</button>
                             <button id="menu-button" class="menu-item-btn">🏠 Main Menu</button>
                         </div>
                     </div>
                 </div>
                 <br>
-                <div class="animation-area" id="animation-area">
-                    <div class="idle-character">
-                        <pre class="stick-figure">
+                <div class="training-container">
+                    <div class="animation-area" id="animation-area">
+                        <div class="idle-character">
+                            <pre class="stick-figure">
   O
  /|\\
  / \\
-                        </pre>
-                        <p class="activity-text">Idle</p>
+                            </pre>
+                            <p class="activity-text">Idle</p>
+                        </div>
                     </div>
-                </div>
-                <br>
-                <div class="skills-grid">
-                    ${skillsHTML}
+                    <div class="skills-grid">
+                        ${skillsHTML}
+                    </div>
                 </div>
             </div>
         `;
@@ -205,16 +208,6 @@ class UIManager {
             // onUsePotion
             () => {
                 modalManager.showHealingPotions();
-            },
-            // onDrinkBuff
-            () => {
-                modalManager.showBuffPotions();
-            },
-            // onRemoveBuff
-            () => {
-                const result = combatManager.removeActiveBuff();
-                // Show notification or update UI
-                this.updateCombatDisplay();
             }
         );
     }

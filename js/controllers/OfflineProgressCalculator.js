@@ -129,19 +129,23 @@ class OfflineProgressCalculator {
         let resourcesGathered = {};
         
         for (let i = 0; i < actionsPerformed; i++) {
-            const drop = this.resourcesManager.getResourceDrop(skillKey, skillLevel);
-            if (drop) {
-                if (!resourcesGathered[drop.type]) {
-                    resourcesGathered[drop.type] = { 
-                        amount: 0, 
-                        name: drop.displayName 
-                    };
+            const drops = this.resourcesManager.getResourceDrop(skillKey, skillLevel);
+            
+            // Handle array of drops (new system)
+            if (Array.isArray(drops)) {
+                for (const drop of drops) {
+                    if (!resourcesGathered[drop.type]) {
+                        resourcesGathered[drop.type] = { 
+                            amount: 0, 
+                            name: drop.displayName 
+                        };
+                    }
+                    resourcesGathered[drop.type].amount += drop.amount;
+                    
+                    // Update state
+                    const currentAmount = currentState.resources[drop.type] || 0;
+                    this.state.update(`resources.${drop.type}`, currentAmount + drop.amount);
                 }
-                resourcesGathered[drop.type].amount += drop.amount;
-                
-                // Update state
-                const currentAmount = currentState.resources[drop.type] || 0;
-                this.state.update(`resources.${drop.type}`, currentAmount + drop.amount);
             }
         }
         

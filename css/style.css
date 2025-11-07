@@ -374,6 +374,14 @@ body {
     gap: 10px;
 }
 
+/* Training Container - Two Column Layout */
+.training-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: start;
+}
+
 /* Animation Area */
 .animation-area {
     border: 2px solid var(--color-primary-dim);
@@ -386,6 +394,8 @@ body {
     background: rgba(51, 221, 51, 0.02);
     position: relative;
     overflow: hidden;
+    position: sticky;
+    top: 20px;
 }
 
 .idle-character {
@@ -509,6 +519,7 @@ body {
     cursor: pointer;
     transition: all 0.2s;
     position: relative;
+    min-width: 250px;
 }
 
 .save-card:hover {
@@ -525,19 +536,25 @@ body {
     margin-bottom: 15px;
     border-bottom: 1px solid var(--color-primary-dim);
     padding-bottom: 10px;
+    gap: 10px;
 }
 
 .save-number {
     color: #ffff00;
     font-size: 12px;
     font-weight: bold;
+    flex-shrink: 0;
 }
 
 .save-name {
     color: var(--color-primary-dim);
     font-size: 12px;
     flex: 1;
-    margin: 0 10px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
 }
 
 .delete-save-btn {
@@ -548,6 +565,7 @@ body {
     font-size: 12px;
     cursor: pointer;
     transition: all 0.2s;
+    flex-shrink: 0;
 }
 
 .delete-save-btn:hover {
@@ -826,10 +844,17 @@ body {
     color: var(--color-primary-dim) !important;
     text-align: left;
     justify-content: flex-start;
+    background: #000 !important;
 }
 
-.theme-btn:hover,
-.theme-btn:focus {
+.theme-btn.selected {
+    background: var(--color-primary-dim) !important;
+    color: #000 !important;
+    font-weight: bold;
+}
+
+.theme-btn:not(.selected):hover,
+.theme-btn:not(.selected):focus {
     background: var(--color-primary-dim) !important;
     color: #000 !important;
 }
@@ -885,7 +910,6 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 15px;
-    margin-top: 20px;
 }
 
 .skill-card {
@@ -978,6 +1002,15 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+.combat-animation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
 .combat-header h3 {
@@ -1097,4 +1130,268 @@ body {
 
 .combat-message p {
     margin: 5px 0;
+}
+
+/* Equipment Shop Styles */
+.equipment-shop-container {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.gold-display {
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid #ffd700;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #ffd700;
+}
+
+.gold-icon {
+    margin-right: 8px;
+}
+
+.gold-amount {
+    font-weight: bold;
+}
+
+.shop-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 150px;
+}
+
+.filter-group label {
+    font-size: 10px;
+    color: var(--color-primary-dim);
+}
+
+.shop-filter {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--color-primary-dim);
+    color: var(--color-primary);
+    padding: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    cursor: pointer;
+}
+
+.shop-filter:hover {
+    border-color: var(--color-primary);
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.equipment-card {
+    background: rgba(51, 221, 51, 0.05);
+    border: 2px solid var(--color-primary-dim);
+    padding: 15px;
+    transition: all 0.2s;
+}
+
+.equipment-card:hover {
+    border-color: var(--color-primary);
+    background: rgba(51, 221, 51, 0.1);
+}
+
+.equipment-card.equipped {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.1);
+}
+
+.equipment-card.unaffordable {
+    opacity: 0.5;
+}
+
+.equipment-card.locked {
+    opacity: 0.4;
+    border-style: dashed;
+}
+
+.item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.item-icon {
+    font-size: 20px;
+}
+
+.item-name {
+    font-size: 11px;
+    font-weight: bold;
+    flex: 1;
+}
+
+.equipped-badge {
+    background: #ffd700;
+    color: #000;
+    padding: 2px 6px;
+    font-size: 8px;
+    border-radius: 3px;
+}
+
+.item-tier {
+    font-size: 9px;
+    color: var(--color-primary-dim);
+    margin-bottom: 8px;
+    text-transform: capitalize;
+}
+
+.item-bonuses {
+    font-size: 9px;
+    color: var(--color-accent);
+    margin-bottom: 8px;
+    min-height: 20px;
+}
+
+.no-bonus {
+    color: var(--color-primary-dim);
+    font-style: italic;
+}
+
+.item-requirement {
+    font-size: 9px;
+    margin-bottom: 10px;
+}
+
+.requirement-met {
+    color: var(--color-accent);
+}
+
+.requirement-not-met {
+    color: #ff6b6b;
+}
+
+.item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-primary-dim);
+}
+
+.item-cost {
+    font-size: 10px;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cost-icon {
+    font-size: 12px;
+}
+
+.item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.equipment-btn {
+    background: var(--color-primary);
+    color: #000;
+    border: 1px solid var(--color-primary);
+    padding: 6px 12px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.equipment-btn:hover {
+    background: transparent;
+    color: var(--color-primary);
+}
+
+.buy-btn {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #ffd700;
+}
+
+.buy-btn:hover {
+    background: transparent;
+    color: var(--color-accent);
+}
+
+.equip-btn {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.equip-btn:hover {
+    background: transparent;
+    color: var(--color-primary);
+}
+
+.unequip-btn {
+    background: #ff9800;
+    border-color: #ff9800;
+}
+
+.unequip-btn:hover {
+    background: transparent;
+    color: #ff9800;
+}
+
+.disabled-btn {
+    background: rgba(128, 128, 128, 0.3);
+    border-color: rgba(128, 128, 128, 0.5);
+    color: rgba(255, 255, 255, 0.3);
+    cursor: not-allowed;
+}
+
+.disabled-btn:hover {
+    background: rgba(128, 128, 128, 0.3);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.item-status {
+    font-size: 8px;
+    color: #ff6b6b;
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+}
+
+.no-items {
+    text-align: center;
+    color: var(--color-primary-dim);
+    padding: 40px;
+    font-size: 11px;
+}
+
+@media (max-width: 768px) {
+    .equipment-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .shop-filters {
+        flex-direction: column;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
 }

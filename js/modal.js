@@ -5,12 +5,31 @@
 class ModalManager {
     constructor() {
         this.currentModal = null;
+        this.gameState = null; // Will be set by game.js
         
         // Initialize specialized modal handlers
         this.confirmationModal = new ConfirmationModal();
         this.inventoryModal = new InventoryModal();
         this.potionModal = new PotionModal();
+        this.equipmentShopModal = new EquipmentShopModal(this);
         this.offlineGainsModal = new OfflineGainsModal();
+    }
+
+    /**
+     * Set the game state reference
+     * @param {Object} gameState - Game state instance
+     */
+    setGameState(gameState) {
+        this.gameState = gameState;
+    }
+
+    /**
+     * Show a simple message (success or error)
+     * @param {string} message - Message to show
+     * @param {string} type - 'success' or 'error'
+     */
+    showMessage(message, type = 'info') {
+        this.showAlert(type === 'error' ? 'Error' : 'Success', message);
     }
 
     /**
@@ -55,19 +74,28 @@ class ModalManager {
     }
 
     /**
-     * Show an inventory modal
-     * @param {Object} resourcesData - Resources from game state
+     * Show the inventory modal
+     * @param {Object} resourcesData - The player's resources
+     * @param {Object} currency - The player's currency (gold, etc.)
      */
-    showInventory(resourcesData) {
+    showInventory(resourcesData, currency = null) {
         // Delegate to InventoryModal
         this.currentModal = this.inventoryModal.getCurrentModal();
-        return this.inventoryModal.showInventory(resourcesData);
+        return this.inventoryModal.showInventory(resourcesData, currency);
+    }
+
+    /**
+     * Show the equipment shop modal
+     */
+    showEquipmentShop() {
+        this.currentModal = this.equipmentShopModal.modalId;
+        this.equipmentShopModal.show();
     }
 
     /**
      * Show the shop modal
      * @param {Object} gameState - Current game state
-     * @param {Function} onPurchase - Callback when upgrade is purchased
+     * @param {Function} onPurchase - Callback when charm is purchased
      */
     showShop(gameState, onPurchase) {
         // Remove any existing modal
@@ -76,27 +104,27 @@ class ModalManager {
         // Filter skills based on current activity
         let skills = ['mining', 'woodcutting', 'chemistry'];
         if (gameState.currentActivity) {
-            // Only show upgrades for the currently training skill
+            // Only show charms for the currently training skill
             skills = [gameState.currentActivity];
         }
         
         let shopHTML = '';
         
         for (const skill of skills) {
-            const upgrades = upgradesManager.getUpgradesForSkill(skill);
+            const charms = charmsManager.getCharmsForSkill(skill);
             const skillData = gameState.skills[skill];
             
             shopHTML += `<div class="shop-category">`;
-            shopHTML += `<h3 style="color: var(--color-primary); margin-bottom: 15px; text-transform: capitalize;">${skillData.name} Upgrades</h3>`;
+            shopHTML += `<h3 style="color: var(--color-primary); margin-bottom: 15px; text-transform: capitalize;">${skillData.name} Charms</h3>`;
             
-            upgrades.forEach(upgrade => {
-                const owned = gameState.upgrades.includes(upgrade.key);
-                const canAfford = upgradesManager.canAfford(upgrade.key, gameState.resources);
-                const meetsLevel = upgradesManager.meetsLevelRequirement(upgrade.key, skillData.level);
-                const hasPrereqs = upgradesManager.hasPrerequisites(upgrade.key, gameState.upgrades);
+            charms.forEach(charm => {
+                const owned = gameState.upgrades.includes(charm.key);
+                const canAfford = charmsManager.canAfford(charm.key, gameState.resources);
+                const meetsLevel = charmsManager.meetsLevelRequirement(charm.key, skillData.level);
+                const hasPrereqs = charmsManager.hasPrerequisites(charm.key, gameState.upgrades);
                 
                 const canBuy = !owned && canAfford && meetsLevel && hasPrereqs;
-                const costStr = upgradesManager.formatCost(upgrade.cost);
+                const costStr = charmsManager.formatCost(charm.cost);
                 
                 let statusText = '';
                 let statusColor = '';
@@ -104,7 +132,7 @@ class ModalManager {
                     statusText = 'OWNED';
                     statusColor = '#ffff00';
                 } else if (!meetsLevel) {
-                    statusText = `REQUIRES LVL ${upgrade.requiredLevel}`;
+                    statusText = `REQUIRES LVL ${charm.requiredLevel}`;
                     statusColor = '#ff6666';
                 } else if (!hasPrereqs) {
                     statusText = 'LOCKED';
@@ -117,18 +145,18 @@ class ModalManager {
                     statusColor = 'var(--color-primary)';
                 }
                 
-                const bonusPercent = Math.round(upgrade.bonus * 100);
+                const bonusPercent = Math.round(charm.bonus * 100);
                 
                 shopHTML += `
                     <div class="shop-item ${owned ? 'owned' : ''} ${canBuy ? 'can-buy' : ''}">
                         <div class="shop-item-header">
-                            <strong>${upgrade.name}</strong>
+                            <strong>${charm.name}</strong>
                             <span style="color: ${statusColor}; font-size: 8px;">${statusText}</span>
                         </div>
-                        <p style="font-size: 8px; color: #999; margin: 5px 0;">${upgrade.description}</p>
+                        <p style="font-size: 8px; color: #999; margin: 5px 0;">${charm.description}</p>
                         <p style="font-size: 9px; margin: 5px 0;">Bonus: <span style="color: var(--color-primary);">+${bonusPercent}% EXP</span></p>
                         <p style="font-size: 8px; margin: 5px 0;">Cost: <span style="color: #ffff00;">${costStr}</span></p>
-                        ${canBuy ? `<button class="shop-buy-btn" data-upgrade="${upgrade.key}">Purchase</button>` : ''}
+                        ${canBuy ? `<button class="shop-buy-btn" data-charm="${charm.key}">Purchase</button>` : ''}
                     </div>
                 `;
             });
@@ -140,10 +168,10 @@ class ModalManager {
             <div class="modal-overlay">
                 <div class="modal-container" style="max-width: 700px;">
                     <div class="modal-header">
-                        <h2>> UPGRADE SHOP</h2>
+                        <h2>> CHARM SHOP</h2>
                     </div>
                     <div class="modal-content" style="max-height: 500px; overflow-y: auto;">
-                        <p style="margin-bottom: 20px; font-size: 9px;">Purchase upgrades to boost your training efficiency!</p>
+                        <p style="margin-bottom: 20px; font-size: 9px;">Purchase charms to boost your training efficiency!</p>
                         ${shopHTML}
                     </div>
                     <div class="modal-buttons">
@@ -163,9 +191,9 @@ class ModalManager {
         const buyButtons = document.querySelectorAll('.shop-buy-btn');
         buyButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                const upgradeKey = btn.getAttribute('data-upgrade');
+                const charmKey = btn.getAttribute('data-charm');
                 if (onPurchase) {
-                    onPurchase(upgradeKey);
+                    onPurchase(charmKey);
                 }
             });
         });
@@ -216,23 +244,23 @@ class ModalManager {
             skills = [gameState.currentActivity];
         }
         
-        let shopHTML = '<p style="margin-bottom: 20px; font-size: 9px;">Purchase upgrades to boost your training efficiency!</p>';
+        let shopHTML = '<p style="margin-bottom: 20px; font-size: 9px;">Purchase charms to boost your training efficiency!</p>';
         
         for (const skill of skills) {
-            const upgrades = upgradesManager.getUpgradesForSkill(skill);
+            const charms = charmsManager.getCharmsForSkill(skill);
             const skillData = gameState.skills[skill];
             
             shopHTML += `<div class="shop-category">`;
-            shopHTML += `<h3 style="color: var(--color-primary); margin-bottom: 15px; text-transform: capitalize;">${skillData.name} Upgrades</h3>`;
+            shopHTML += `<h3 style="color: var(--color-primary); margin-bottom: 15px; text-transform: capitalize;">${skillData.name} Charms</h3>`;
             
-            upgrades.forEach(upgrade => {
-                const owned = gameState.upgrades.includes(upgrade.key);
-                const canAfford = upgradesManager.canAfford(upgrade.key, gameState.resources);
-                const meetsLevel = upgradesManager.meetsLevelRequirement(upgrade.key, skillData.level);
-                const hasPrereqs = upgradesManager.hasPrerequisites(upgrade.key, gameState.upgrades);
+            charms.forEach(charm => {
+                const owned = gameState.upgrades.includes(charm.key);
+                const canAfford = charmsManager.canAfford(charm.key, gameState.resources);
+                const meetsLevel = charmsManager.meetsLevelRequirement(charm.key, skillData.level);
+                const hasPrereqs = charmsManager.hasPrerequisites(charm.key, gameState.upgrades);
                 
                 const canBuy = !owned && canAfford && meetsLevel && hasPrereqs;
-                const costStr = upgradesManager.formatCost(upgrade.cost);
+                const costStr = charmsManager.formatCost(charm.cost);
                 
                 let statusText = '';
                 let statusColor = '';
@@ -240,7 +268,7 @@ class ModalManager {
                     statusText = 'OWNED';
                     statusColor = '#ffff00';
                 } else if (!meetsLevel) {
-                    statusText = `REQUIRES LVL ${upgrade.requiredLevel}`;
+                    statusText = `REQUIRES LVL ${charm.requiredLevel}`;
                     statusColor = '#ff6666';
                 } else if (!hasPrereqs) {
                     statusText = 'LOCKED';
@@ -253,18 +281,18 @@ class ModalManager {
                     statusColor = 'var(--color-primary)';
                 }
                 
-                const bonusPercent = Math.round(upgrade.bonus * 100);
+                const bonusPercent = Math.round(charm.bonus * 100);
                 
                 shopHTML += `
                     <div class="shop-item ${owned ? 'owned' : ''} ${canBuy ? 'can-buy' : ''}">
                         <div class="shop-item-header">
-                            <strong>${upgrade.name}</strong>
+                            <strong>${charm.name}</strong>
                             <span style="color: ${statusColor}; font-size: 8px;">${statusText}</span>
                         </div>
-                        <p style="font-size: 8px; color: #999; margin: 5px 0;">${upgrade.description}</p>
+                        <p style="font-size: 8px; color: #999; margin: 5px 0;">${charm.description}</p>
                         <p style="font-size: 9px; margin: 5px 0;">Bonus: <span style="color: var(--color-primary);">+${bonusPercent}% EXP</span></p>
                         <p style="font-size: 8px; margin: 5px 0;">Cost: <span style="color: #ffff00;">${costStr}</span></p>
-                        ${canBuy ? `<button class="shop-buy-btn" data-upgrade="${upgrade.key}">Purchase</button>` : ''}
+                        ${canBuy ? `<button class="shop-buy-btn" data-charm="${charm.key}">Purchase</button>` : ''}
                     </div>
                 `;
             });
@@ -279,9 +307,9 @@ class ModalManager {
         const buyButtons = contentDiv.querySelectorAll('.shop-buy-btn');
         buyButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                const upgradeKey = btn.getAttribute('data-upgrade');
+                const charmKey = btn.getAttribute('data-charm');
                 if (this.currentShopCallback) {
-                    this.currentShopCallback(upgradeKey);
+                    this.currentShopCallback(charmKey);
                 }
             });
         });
@@ -298,8 +326,9 @@ class ModalManager {
         
         const themeButtons = Object.entries(themes).map(([key, name]) => {
             const selected = key === currentTheme ? ' (Current)' : '';
+            const selectedClass = key === currentTheme ? 'selected' : '';
             return `
-                <button class="modal-btn theme-btn" data-theme="${key}" style="width: 100%; margin: 5px 0;">
+                <button class="modal-btn theme-btn ${selectedClass}" data-theme="${key}" style="width: 100%; margin: 5px 0;">
                     <span class="btn-cursor">></span> ${name}${selected}
                 </button>
             `;
@@ -327,6 +356,14 @@ class ModalManager {
         modalElement.innerHTML = modalHTML;
         this.currentModal = modalElement.firstElementChild;
         document.body.appendChild(this.currentModal);
+
+        // Remove focus from any auto-focused elements
+        setTimeout(() => {
+            const focused = this.currentModal.querySelector(':focus');
+            if (focused) {
+                focused.blur();
+            }
+        }, 0);
 
         // Set up event listeners for theme buttons
         const themeButtons_elements = document.querySelectorAll('.theme-btn');
@@ -399,7 +436,7 @@ class ModalManager {
                             • 60 fantasy-themed titles to unlock (10 per skill)<br>
                             • Comprehensive statistics tracking (enemies, potions, time, resources)<br>
                             • 74+ resources (8 ores, 7 logs, 9 potions, 50+ combat drops)<br>
-                            • 28 upgrades across all skills (10%-100% EXP bonus)<br>
+                            • 28 charms across all skills (10%-100% EXP bonus)<br>
                             • Smart shop system that filters by active skill<br>
                             • Inventory management with combat resource categories<br>
                             • 4 customizable color themes (Green, Amber, Blue, Red)<br>
@@ -425,9 +462,9 @@ class ModalManager {
                             <strong style="color: var(--color-primary);">Progression System:</strong><br>
                             • Gather resources while training skills<br>
                             • Defeat enemies to collect rare combat materials<br>
-                            • Use resources to buy tool/weapon/armor upgrades<br>
+                            • Use resources to buy charms and equipment<br>
                             • Stack bonuses for massive EXP gains<br>
-                            • Unlock better resources and upgrades at higher levels
+                            • Unlock better resources and equipment at higher levels
                         </p>
                         
                         <p style="margin-bottom: 15px;">
@@ -502,7 +539,7 @@ class ModalManager {
         const totalResources = stats.getTotalResources(gameState.resources);
         const resourcesByCategory = stats.getResourcesByCategory(gameState.resources);
         const mostGathered = stats.getMostGatheredResource(gameState.resources);
-        const upgradeStats = stats.getUpgradeStats(gameState.upgrades, gameState.skills);
+        const charmStats = stats.getCharmStats(gameState.upgrades, gameState.skills);
         const playTime = stats.formatTime(gameState.stats.playTime);
         
         // Build skill time breakdown
@@ -525,9 +562,9 @@ class ModalManager {
                     <div style="font-size: 8px; color: #999;">
                         Time Trained: ${timeStr} | Titles: ${progress.current}/${progress.total} (${progress.percentage}%)
                     </div>
-                    ${upgradeStats.bySkill[key].count > 0 ? `
+                    ${charmStats.bySkill[key].count > 0 ? `
                     <div style="font-size: 8px; color: var(--color-primary-dim); margin-top: 3px;">
-                        Upgrades: ${upgradeStats.bySkill[key].count} (+${upgradeStats.bySkill[key].bonus}% EXP)
+                        Charms: ${charmStats.bySkill[key].count} (+${charmStats.bySkill[key].bonus}% EXP)
                     </div>
                     ` : ''}
                 </div>
@@ -564,8 +601,16 @@ class ModalManager {
                                 <div style="font-size: 12px; color: #ffff00;">${highestSkill.name} (${highestSkill.level})</div>
                             </div>
                             <div style="padding: 8px; border: 1px solid var(--color-primary-dim); background: rgba(0,0,0,0.3);">
-                                <div style="font-size: 8px; color: #999;">Total Upgrades</div>
-                                <div style="font-size: 12px; color: var(--color-primary);">${upgradeStats.total} / 28</div>
+                                <div style="font-size: 8px; color: #999;">Total Charms</div>
+                                <div style="font-size: 12px; color: var(--color-primary);">${charmStats.total} / 28</div>
+                            </div>
+                            <div style="padding: 8px; border: 1px solid #ffd700; background: rgba(255,215,0,0.1);">
+                                <div style="font-size: 8px; color: #999;">💰 Total Gold Earned</div>
+                                <div style="font-size: 12px; color: #ffd700;">${stats.formatNumber(gameState.statistics?.totalGoldEarned || 0)}</div>
+                            </div>
+                            <div style="padding: 8px; border: 1px solid #ffd700; background: rgba(255,215,0,0.1);">
+                                <div style="font-size: 8px; color: #999;">💰 Current Gold</div>
+                                <div style="font-size: 12px; color: #ffd700;">${stats.formatNumber(gameState.currency?.gold || 0)}</div>
                             </div>
                         </div>
                         
@@ -623,6 +668,9 @@ class ModalManager {
                         
                         <h3 style="color: var(--color-primary); margin-bottom: 10px; margin-top: 15px;">Skills & Achievements</h3>
                         ${skillTimeHTML}
+                        
+                        <h3 style="color: var(--color-primary); margin-bottom: 10px; margin-top: 15px;">Equipment</h3>
+                        ${this.generateEquipmentSection(gameState)}
                     </div>
                     <div class="modal-buttons">
                         <button id="modal-stats-ok-btn" class="modal-btn modal-btn-ok">Close</button>
@@ -663,6 +711,72 @@ class ModalManager {
 
         // Focus the OK button
         okBtn.focus();
+    }
+
+    /**
+     * Generate equipment section for statistics modal
+     * @param {Object} gameState - Current game state
+     * @returns {string} - HTML for equipment section
+     */
+    generateEquipmentSection(gameState) {
+        const equippedItems = gameState.equipment?.equipped || {};
+        const equipmentBonuses = equipment.calculateTotalBonuses(equippedItems);
+        
+        let equipmentHTML = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">';
+        
+        // Show equipped items
+        const slots = ['weapon', 'offhand', 'helmet', 'body', 'legs'];
+        slots.forEach(slot => {
+            const item = equippedItems[slot];
+            const slotName = slot === 'offhand' ? 'Shield' : this.capitalize(slot);
+            
+            equipmentHTML += `
+                <div style="padding: 8px; border: 1px solid var(--color-primary-dim); background: rgba(0,0,0,0.3);">
+                    <div style="font-size: 8px; color: #999;">${slotName}</div>
+                    <div style="font-size: 12px; color: var(--color-primary);">
+                        ${item ? item.name : 'None equipped'}
+                    </div>
+                    ${item ? `<div style="font-size: 8px; color: var(--color-primary-dim);">${this.generateBonusText(item.bonuses)}</div>` : ''}
+                </div>
+            `;
+        });
+        
+        equipmentHTML += '</div>';
+        
+        // Show total bonuses if any equipment is equipped
+        const hasEquipment = Object.values(equippedItems).some(item => item !== null);
+        if (hasEquipment) {
+            equipmentHTML += `
+                <div style="padding: 8px; border: 1px solid #ffff00; background: rgba(255,255,0,0.1); margin-bottom: 15px;">
+                    <div style="font-size: 8px; color: #999;">Total Equipment Bonuses</div>
+                    <div style="font-size: 12px; color: #ffff00;">${this.generateBonusText(equipmentBonuses)}</div>
+                </div>
+            `;
+        }
+        
+        return equipmentHTML;
+    }
+
+    /**
+     * Generate bonus text from bonuses object
+     * @param {Object} bonuses - Bonuses object
+     * @returns {string} - Formatted bonus text
+     */
+    generateBonusText(bonuses) {
+        const bonusEntries = Object.entries(bonuses)
+            .filter(([key, value]) => value > 0)
+            .map(([key, value]) => `+${value} ${this.capitalize(key)}`);
+        
+        return bonusEntries.length > 0 ? bonusEntries.join(', ') : 'No bonuses';
+    }
+
+    /**
+     * Capitalize first letter of string
+     * @param {string} str - String to capitalize
+     * @returns {string} - Capitalized string
+     */
+    capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
     /**

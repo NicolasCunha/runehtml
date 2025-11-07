@@ -64,7 +64,7 @@ class CombatDisplayRenderer {
     }
     
     /**
-     * Render active combat
+     * Render active combat display
      * @param {HTMLElement} animationArea - The animation area element
      * @param {Object} combat - Combat state
      */
@@ -73,8 +73,9 @@ class CombatDisplayRenderer {
         const playerHPPercent = Math.floor((combat.playerCurrentHP / combat.playerMaxHP) * 100);
         const enemyHPPercent = Math.floor((enemy.currentHP / enemy.maxHP) * 100);
         
-        // Get buff display
-        const buffDisplay = this.buildBuffDisplay(combat);
+        // Get the appropriate animation for the combat skill and level
+        const skillLevel = gameState.get().skills[combat.skill].level;
+        const animation = animationManager.getAnimation(combat.skill, skillLevel);
         
         // Get potion cooldown display
         const potionStatus = this.buildPotionStatus(combat);
@@ -84,6 +85,21 @@ class CombatDisplayRenderer {
         
         animationArea.innerHTML = `
             <div class="combat-area">
+                <div class="combat-animation">
+                    <div class="animation-scene">
+                        <div class="bg-elements">${animation.bgElements}</div>
+                        <div class="character-container">
+                            <pre class="stick-figure animate">${animation.character}</pre>
+                        </div>
+                        ${animation.target ? `
+                        <div class="target-container">
+                            <pre class="training-target">${animation.target}</pre>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <p class="activity-text">${animation.name}</p>
+                </div>
+                
                 <div class="combat-header">
                     <h3 style="color: var(--color-primary);">⚔️ ${enemy.name} (Level ${enemy.level})</h3>
                 </div>
@@ -104,34 +120,14 @@ class CombatDisplayRenderer {
                     </div>
                 </div>
                 
-                ${buffDisplay}
-                
                 <div class="combat-actions">
                     <button id="use-potion-btn" class="combat-btn">🧪 Potions ${potionStatus}</button>
-                    ${!combat.activeBuff ? '<button id="drink-buff-btn" class="combat-btn">✨ Drink Buff</button>' : '<button id="remove-buff-btn" class="combat-btn">❌ Remove Buff</button>'}
                 </div>
                 
                 <div class="combat-log">
                     <div class="log-title">Combat Log:</div>
                     ${logHTML}
                 </div>
-            </div>
-        `;
-    }
-    
-    /**
-     * Build buff display HTML
-     * @param {Object} combat - Combat state
-     * @returns {string} HTML string for buff display
-     */
-    buildBuffDisplay(combat) {
-        if (!combat.activeBuff) return '';
-        
-        const buffName = combatManager.getBuffName(combat.activeBuff.type);
-        const buffDesc = combatManager.getBuffDescription(combat.activeBuff.type);
-        return `
-            <div class="active-buff">
-                🧪 ${buffName} (${combat.activeBuff.battlesLeft} battles) - ${buffDesc}
             </div>
         `;
     }
@@ -151,24 +147,12 @@ class CombatDisplayRenderer {
     /**
      * Setup event listeners for combat buttons
      * @param {Function} onUsePotion - Callback for use potion button
-     * @param {Function} onDrinkBuff - Callback for drink buff button
-     * @param {Function} onRemoveBuff - Callback for remove buff button
      */
-    setupEventListeners(onUsePotion, onDrinkBuff, onRemoveBuff) {
+    setupEventListeners(onUsePotion) {
         const usePotionBtn = document.getElementById('use-potion-btn');
-        const drinkBuffBtn = document.getElementById('drink-buff-btn');
-        const removeBuffBtn = document.getElementById('remove-buff-btn');
         
         if (usePotionBtn && onUsePotion) {
             usePotionBtn.addEventListener('click', onUsePotion);
-        }
-        
-        if (drinkBuffBtn && onDrinkBuff) {
-            drinkBuffBtn.addEventListener('click', onDrinkBuff);
-        }
-        
-        if (removeBuffBtn && onRemoveBuff) {
-            removeBuffBtn.addEventListener('click', onRemoveBuff);
         }
     }
 }

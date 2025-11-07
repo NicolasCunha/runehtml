@@ -13,7 +13,7 @@ class AnimationManager {
    /|\\
    / \\
   ┌───┐
-  │ 🗡 │
+  │ ⚔ │
   └───┘`,
                         target: `   ___
   /o o\\
@@ -22,7 +22,7 @@ class AnimationManager {
    |||
   /   \\`,
                         name: 'Training on Slimes',
-                        bgElements: '✨ 💧 ✨'
+                        bgElements: '* ~ *'
                     },
                     {
                         min: 11, max: 20,
@@ -38,7 +38,7 @@ class AnimationManager {
   /|   |\\
    WWWW`,
                         name: 'Fighting Goblins',
-                        bgElements: '💀 ⚔ 💀'
+                        bgElements: '† ⚔ †'
                     },
                     {
                         min: 21, max: 30,
@@ -46,7 +46,7 @@ class AnimationManager {
    /|\\
    / \\
   ┌───┐
-  │🗡💥│
+  │ ⚔ │
   └───┘`,
                         target: `   ___
   |o o|
@@ -55,7 +55,7 @@ class AnimationManager {
   |▓▓▓|
   |▓▓▓|`,
                         name: 'Battling Skeletons',
-                        bgElements: '🦴 💀 🦴'
+                        bgElements: '† ⚔ †'
                     },
                     {
                         min: 31, max: 40,
@@ -63,7 +63,7 @@ class AnimationManager {
    /|\\
    / \\
   ┌───┐
-  │⚔✨│
+  │ ⚔ │
   └───┘`,
                         target: `  /\\_/\\
  ( O.O )
@@ -71,7 +71,7 @@ class AnimationManager {
  /|▓▓▓|\\
   MMMMM`,
                         name: 'Fighting Werewolves',
-                        bgElements: '🌙 🐺 🌙'
+                        bgElements: '☾ ⚔ ☾'
                     },
                     {
                         min: 41, max: 50,
@@ -79,7 +79,7 @@ class AnimationManager {
    /|\\
    / \\
   ┌───┐
-  │⚔🔥│
+  │ ⚔ │
   └───┘`,
                         target: `   /‾‾‾\\
   ( ◉◉ )
@@ -87,7 +87,7 @@ class AnimationManager {
    /███\\
   /█████\\`,
                         name: 'Slaying Demons',
-                        bgElements: '🔥 👹 🔥'
+                        bgElements: '~ ⚔ ~'
                     },
                     {
                         min: 51, max: 99,
@@ -95,15 +95,15 @@ class AnimationManager {
    /|\\
    / \\
   ┌───┐
-  │⚔⚡│
+  │ ⚔ │
   └───┘`,
-                        target: `   {🐲}
+                        target: `   {‡}
   ╱|╲╱|╲
  ▓▓▓▓▓▓▓
   ╲ ╲ ╱ ╱
    WWWWW`,
                         name: 'Defeating Dragons',
-                        bgElements: '⚡ 🐲 ⚡'
+                        bgElements: '⚡ ‡ ⚡'
                     }
                 ]
             },
@@ -116,10 +116,10 @@ class AnimationManager {
   │ | │
   │/ \\│
   └───┘
- 🗡 → 🛡`,
+ ⚔ → ▬`,
                         target: ``,
                         name: 'Blocking with Wooden Shield',
-                        bgElements: '🗡 🪵 🗡'
+                        bgElements: '⚔ | ⚔'
                     },
                     {
                         min: 11, max: 20,
@@ -128,10 +128,10 @@ class AnimationManager {
   │ | │
   │/ \\│
   └───┘
- ⚔ → 🛡`,
+ ⚔ → ▬`,
                         target: ``,
                         name: 'Iron Shield Training',
-                        bgElements: '⚔ 🔨 ⚔'
+                        bgElements: '⚔ ⚒ ⚔'
                     },
                     {
                         min: 21, max: 30,
@@ -140,7 +140,7 @@ class AnimationManager {
   ║ | ║
   ║/ \\║
   └═══┘
- ⚔ → 🛡`,
+ ⚔ → ▬`,
                         target: ``,
                         name: 'Steel Shield Defense',
                         bgElements: '⚔ ⚡ ⚔'
@@ -152,10 +152,10 @@ class AnimationManager {
   ║ | ║
   ║/ \\║
   ╚═══╝
- ⚔ ⇒ 🛡`,
+ ⚔ ⇒ ▬`,
                         target: ``,
                         name: 'Mithril Shield Mastery',
-                        bgElements: '✨ 🛡 ✨'
+                        bgElements: '* ▬ *'
                     },
                     {
                         min: 41, max: 50,
@@ -164,10 +164,10 @@ class AnimationManager {
   ║ | ║
   ║/ \\║
   ╚═══╝
- 🔥 ⇒ 🛡`,
+ ~ ⇒ ▬`,
                         target: ``,
                         name: 'Adamant Shield Training',
-                        bgElements: '💎 🛡 💎'
+                        bgElements: '◆ ▬ ◆'
                     },
                     {
                         min: 51, max: 99,
@@ -176,10 +176,10 @@ class AnimationManager {
   ║ | ║
   ║/ \\║
   ╚═══╝
- ⚡ ⇒ 🛡`,
+ ⚡ ⇒ ▬`,
                         target: ``,
                         name: 'Legendary Shield Defense',
-                        bgElements: '⚡ 👑 ⚡'
+                        bgElements: '⚡ ♛ ⚡'
                     }
                 ]
             },
@@ -191,7 +191,7 @@ class AnimationManager {
    /|)━━⟶
    / \\
   ┌───┐
-  │ 🏹 │
+  │ ↣ │
   └───┘`,
                         target: `  ┌─┐
   │●│
@@ -199,7 +199,7 @@ class AnimationManager {
   Hay
  Bale`,
                         name: 'Shooting Hay Bales',
-                        bgElements: '→ 🎯 →'
+                        bgElements: '→ ◉ →'
                     },
                     {
                         min: 11, max: 20,
@@ -207,7 +207,7 @@ class AnimationManager {
    /|)━━⟶
    / \\
   ┌───┐
-  │🏹✨│
+  │ ↣ │
   └───┘`,
                         target: `  ┌─┐
   │ │
@@ -224,16 +224,16 @@ class AnimationManager {
    /|)━━⟶
    / \\
   ┌───┐
-  │🏹💨│
+  │ ↣ │
   └───┘`,
-                        target: `   🦅
+                        target: `   ≈
   \\|/
   /|\\
   / \\
  Flying
   Bird`,
                         name: 'Hunting Birds',
-                        bgElements: '🦅 💨 🦅'
+                        bgElements: '≈ ~ ≈'
                     },
                     {
                         min: 31, max: 40,
@@ -241,7 +241,7 @@ class AnimationManager {
    /|)━━⟶
    / \\
   ┌───┐
-  │🏹⚡│
+  │ ↣ │
   └───┘`,
                         target: `  /\\_/\\
  ( x.x )
@@ -249,7 +249,7 @@ class AnimationManager {
   /|||\\
   Rabbit`,
                         name: 'Hunting Rabbits',
-                        bgElements: '🐰 💨 🐰'
+                        bgElements: '∴ ~ ∴'
                     },
                     {
                         min: 41, max: 50,
@@ -257,7 +257,7 @@ class AnimationManager {
    /|)━━⟶
    / \\
   ┌───┐
-  │🏹🔥│
+  │ ↣ │
   └───┘`,
                         target: `  /‾‾‾\\
  ( •.• )
@@ -266,7 +266,7 @@ class AnimationManager {
   MMMM
   Boar`,
                         name: 'Hunting Boars',
-                        bgElements: '🐗 🌲 🐗'
+                        bgElements: '§ ♠ §'
                     },
                     {
                         min: 51, max: 99,
@@ -274,15 +274,15 @@ class AnimationManager {
    /|)━━⟶
    / \\
   ┌───┐
-  │🏹💎│
+  │ ↣ │
   └───┘`,
-                        target: `   {🦎}
+                        target: `   {≈}
   ╱|╲╱|╲
  ▓▓▓▓▓▓
   ╲ ╲ ╱
  Wyvern`,
                         name: 'Hunting Wyverns',
-                        bgElements: '🦎 ⚡ 🦎'
+                        bgElements: '≈ ⚡ ≈'
                     }
                 ]
             },
@@ -294,16 +294,16 @@ class AnimationManager {
    ⛏\\
    / \\
   ┌───┐
-  │⚒ │
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║░░░║
-  ║░░░║
-  ║░░░║
-  ╚═══╝
-  Rock`,
+                        target: `
+┌─────────┐
+│ ░░░░░░░ │
+│ ░▓▓▓▓░░ │
+│ ░░▓▓░░░ │
+└─────────┘`,
                         name: 'Mining Rocks',
-                        bgElements: '🪨 ⛏ 🪨'
+                        bgElements: '∴ ⛏ ∴'
                     },
                     {
                         min: 11, max: 20,
@@ -311,16 +311,16 @@ class AnimationManager {
    ⛏\\
    / \\
   ┌───┐
-  │⚒✨│
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║░░░║
-  ║░◆░║
-  ║░░░║
-  ╚═══╝
-   Tin`,
+                        target: `
+┌─────────┐
+│ ░░○○░░░ │
+│ ░○▓▓○░░ │
+│ ░░○○░░░ │
+└─────────┘`,
                         name: 'Mining Tin Ore',
-                        bgElements: '⚪ ⛏ ⚪'
+                        bgElements: '○ ⛏ ○'
                     },
                     {
                         min: 21, max: 30,
@@ -328,16 +328,16 @@ class AnimationManager {
    ⛏\\
    / \\
   ┌───┐
-  │⚒💎│
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║▓▓▓║
-  ║▓◆▓║
-  ║▓▓▓║
-  ╚═══╝
-  Iron`,
+                        target: `
+┌─────────┐
+│ ░░███░░ │
+│ ░█▓▓▓█░ │
+│ ░░███░░ │
+└─────────┘`,
                         name: 'Mining Iron Ore',
-                        bgElements: '⚙ ⛏ ⚙'
+                        bgElements: '◘ ⛏ ◘'
                     },
                     {
                         min: 31, max: 40,
@@ -345,16 +345,16 @@ class AnimationManager {
    ⛏\\
    / \\
   ┌───┐
-  │⚒⚡│
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║███║
-  ║█◆█║
-  ║███║
-  ╚═══╝
-  Coal`,
+                        target: `
+┌─────────┐
+│ ░▓▓▓▓░░ │
+│ ░▓███▓░ │
+│ ░▓▓▓▓░░ │
+└─────────┘`,
                         name: 'Mining Coal',
-                        bgElements: '⚫ 🔥 ⚫'
+                        bgElements: '● ~ ●'
                     },
                     {
                         min: 41, max: 50,
@@ -362,16 +362,16 @@ class AnimationManager {
    ⛏\\
    / \\
   ┌───┐
-  │⚒💰│
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║▓▓▓║
-  ║▓★▓║
-  ║▓▓▓║
-  ╚═══╝
-  Gold`,
+                        target: `
+┌─────────┐
+│ ░▓▓▓▓░░ │
+│ ▓█▓▓▓█▓ │
+│ ░▓▓▓▓░░ │
+└─────────┘`,
                         name: 'Mining Gold Ore',
-                        bgElements: '💰 ✨ 💰'
+                        bgElements: '$ * $'
                     },
                     {
                         min: 51, max: 60,
@@ -379,16 +379,16 @@ class AnimationManager {
    ⛏\\
    / \\
   ┌───┐
-  │⚒✨│
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║▓▓▓║
-  ║▓◇▓║
-  ║▓▓▓║
-  ╚═══╝
-Mithril`,
+                        target: `
+┌─────────┐
+│ ░◊◊◊◊░░ │
+│ ◊█▓▓█◊░ │
+│ ░◊◊◊◊░░ │
+└─────────┘`,
                         name: 'Mining Mithril Ore',
-                        bgElements: '💠 ✨ 💠'
+                        bgElements: '◊ ⛏ ◊'
                     },
                     {
                         min: 61, max: 70,
@@ -396,16 +396,16 @@ Mithril`,
    ⛏\\
    / \\
   ┌───┐
-  │⚒💎│
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║▓▓▓║
-  ║▓◈▓║
-  ║▓▓▓║
-  ╚═══╝
-Adamant`,
+                        target: `
+┌─────────┐
+│ ░▓███▓░ │
+│ ▓█▓▓▓█▓ │
+│ ░▓███▓░ │
+└─────────┘`,
                         name: 'Mining Adamantite',
-                        bgElements: '💎 ⚡ 💎'
+                        bgElements: '◆ * ◆'
                     },
                     {
                         min: 71, max: 99,
@@ -413,16 +413,16 @@ Adamant`,
    ⛏\\
    / \\
   ┌───┐
-  │⚒👑│
+  │ ⛏ │
   └───┘`,
-                        target: `  ╔═══╗
-  ║███║
-  ║█◆█║
-  ║███║
-  ╚═══╝
- Runite`,
+                        target: `
+┌─────────┐
+│ ◊█▓▓█◊░ │
+│ █▓███▓█ │
+│ ◊█▓▓█◊░ │
+└─────────┘`,
                         name: 'Mining Runite Ore',
-                        bgElements: '👑 ⚡ 👑'
+                        bgElements: '♦ * ♦'
                     }
                 ]
             },
@@ -434,7 +434,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │ 🪓 │
+  │ ⚒ │
   └───┘`,
                         target: `    ♣
    ♣♣♣
@@ -444,7 +444,7 @@ Adamant`,
  Normal
   Tree`,
                         name: 'Chopping Normal Trees',
-                        bgElements: '🍃 🪵 🍃'
+                        bgElements: '∴ ═ ∴'
                     },
                     {
                         min: 11, max: 20,
@@ -452,7 +452,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🪓✨│
+  │ ⚒ │
   └───┘`,
                         target: `    ♠
    ♠♠♠
@@ -463,7 +463,7 @@ Adamant`,
    Oak
   Tree`,
                         name: 'Chopping Oak Trees',
-                        bgElements: '🍂 🪵 🍂'
+                        bgElements: '∴ ═ ∴'
                     },
                     {
                         min: 21, max: 30,
@@ -471,7 +471,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🪓💎│
+  │ ⚒ │
   └───┘`,
                         target: `    ♦
    ♦♦♦
@@ -483,7 +483,7 @@ Adamant`,
  Willow
   Tree`,
                         name: 'Chopping Willow Trees',
-                        bgElements: '🌿 🪵 🌿'
+                        bgElements: '≈ ═ ≈'
                     },
                     {
                         min: 31, max: 40,
@@ -491,7 +491,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🪓🌲│
+  │ ⚒ │
   └───┘`,
                         target: `   ▲▲▲
   ▲▲▲▲▲
@@ -502,7 +502,7 @@ Adamant`,
  Maple
   Tree`,
                         name: 'Chopping Maple Trees',
-                        bgElements: '🍁 🪵 🍁'
+                        bgElements: '† ═ †'
                     },
                     {
                         min: 41, max: 50,
@@ -510,7 +510,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🪓⚡│
+  │ ⚒ │
   └───┘`,
                         target: `    ♣
    ♣♣♣
@@ -522,7 +522,7 @@ Adamant`,
    Yew
   Tree`,
                         name: 'Chopping Yew Trees',
-                        bgElements: '🌲 🪵 🌲'
+                        bgElements: '♠ ═ ♠'
                     },
                     {
                         min: 51, max: 60,
@@ -530,7 +530,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🪓💫│
+  │ ⚒ │
   └───┘`,
                         target: `   ✦✦✦
   ✦✦✦✦✦
@@ -541,7 +541,7 @@ Adamant`,
  Magic
   Tree`,
                         name: 'Chopping Magic Trees',
-                        bgElements: '✨ 🪄 ✨'
+                        bgElements: '* ═ *'
                     },
                     {
                         min: 61, max: 99,
@@ -549,7 +549,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🪓👑│
+  │ ⚒ │
   └───┘`,
                         target: `   ◊◊◊
   ◊◊◊◊◊
@@ -561,7 +561,7 @@ Adamant`,
  Redwood
   Tree`,
                         name: 'Chopping Redwood Trees',
-                        bgElements: '👑 🌳 👑'
+                        bgElements: '♛ ═ ♛'
                     }
                 ]
             },
@@ -573,7 +573,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │ 🧪 │
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
   ║ ≈ ║
@@ -582,7 +582,7 @@ Adamant`,
   Basic
  Potion`,
                         name: 'Brewing Basic Potions',
-                        bgElements: '💧 🧪 💧'
+                        bgElements: '~ ⌬ ~'
                     },
                     {
                         min: 11, max: 20,
@@ -590,7 +590,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪✨│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
   ║ ~ ║
@@ -599,7 +599,7 @@ Adamant`,
  Health
  Potion`,
                         name: 'Crafting Health Potions',
-                        bgElements: '♥ 🧪 ♥'
+                        bgElements: '♥ ⌬ ♥'
                     },
                     {
                         min: 21, max: 30,
@@ -607,7 +607,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪💙│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
   ║ ≋ ║
@@ -616,7 +616,7 @@ Adamant`,
   Mana
  Potion`,
                         name: 'Brewing Mana Potions',
-                        bgElements: '💙 🧪 💙'
+                        bgElements: '◊ ⌬ ◊'
                     },
                     {
                         min: 31, max: 40,
@@ -624,7 +624,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪⚡│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
   ║ ⚡ ║
@@ -641,7 +641,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪💀│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
   ║ ☠ ║
@@ -650,7 +650,7 @@ Adamant`,
  Poison
   Vial`,
                         name: 'Concocting Poisons',
-                        bgElements: '💀 ☠ 💀'
+                        bgElements: '† ☠ †'
                     },
                     {
                         min: 51, max: 60,
@@ -658,16 +658,16 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪🔥│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
-  ║ 🔥 ║
-  ║🔥◈🔥║
+  ║ ~ ║
+  ║~◈~║
   ╚═══╝
   Fire
  Elixir`,
                         name: 'Brewing Fire Elixirs',
-                        bgElements: '🔥 💥 🔥'
+                        bgElements: '~ * ~'
                     },
                     {
                         min: 61, max: 70,
@@ -675,16 +675,16 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪❄️│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
-  ║ ❄ ║
-  ║❄◇❄║
+  ║ * ║
+  ║*◇*║
   ╚═══╝
   Frost
  Elixir`,
                         name: 'Creating Frost Elixirs',
-                        bgElements: '❄️ 💎 ❄️'
+                        bgElements: '* ◇ *'
                     },
                     {
                         min: 71, max: 80,
@@ -692,7 +692,7 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪✨│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
   ║ ✦ ║
@@ -701,7 +701,7 @@ Adamant`,
  Divine
  Elixir`,
                         name: 'Distilling Divine Elixirs',
-                        bgElements: '✨ ⭐ ✨'
+                        bgElements: '* ★ *'
                     },
                     {
                         min: 81, max: 99,
@@ -709,16 +709,16 @@ Adamant`,
    /|\\
    / \\
   ┌───┐
-  │🧪👑│
+  │ ⌬ │
   └───┘`,
                         target: `  ╔═══╗
-  ║ 👑 ║
-  ║👑◆👑║
+  ║ ♛ ║
+  ║♛◆♛║
   ╚═══╝
  Elixir
 of Life`,
                         name: 'Creating Elixir of Life',
-                        bgElements: '👑 💫 👑'
+                        bgElements: '♛ ✦ ♛'
                     }
                 ]
             }
@@ -760,7 +760,7 @@ of Life`,
  / \\`,
             target: '',
             name: 'Idle',
-            bgElements: '✨ ✨ ✨'
+            bgElements: '* * *'
         };
     }
 }

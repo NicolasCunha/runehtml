@@ -48,46 +48,47 @@ class ResourcesManager {
     }
     
     /**
-     * Get resource drop for a skill action
+     * Get resource drops for a skill action (can return multiple resources)
      * @param {string} skillKey - The skill being trained
      * @param {number} level - Current skill level
-     * @returns {Object|null} - Resource drop info or null
+     * @returns {Array} - Array of resource drop objects
      */
     getResourceDrop(skillKey, level) {
         const skillResource = this.skillResources[skillKey];
-        if (!skillResource) return null;
+        if (!skillResource) return [];
         
         // Find all drops available at current level (current range and all previous ranges)
         const availableDrops = skillResource.drops.filter(d => level >= d.min);
-        if (availableDrops.length === 0) return null;
+        if (availableDrops.length === 0) return [];
         
-        // Randomly select one of the available drops (weighted towards higher tier)
-        // Higher tier resources have higher probability
-        const weights = availableDrops.map((drop, index) => index + 1);
-        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-        let random = Math.random() * totalWeight;
+        const drops = [];
         
-        let selectedDrop = availableDrops[0];
+        // Each resource type gets its own roll
+        // Drop chance decreases for higher tier resources
         for (let i = 0; i < availableDrops.length; i++) {
-            random -= weights[i];
-            if (random <= 0) {
-                selectedDrop = availableDrops[i];
-                break;
+            const drop = availableDrops[i];
+            
+            // Calculate drop chance based on tier (lower index = higher tier = lower chance)
+            // Reverse the index so newest unlocks have lowest chance
+            const tierIndex = availableDrops.length - i - 1;
+            // Base chance decreases with tier: 60%, 45%, 30%, 20%, 15%, 10%, 7%, 5%
+            const baseChance = Math.max(0.05, 0.60 - (tierIndex * 0.15));
+            
+            // Roll for this resource
+            if (Math.random() <= baseChance) {
+                // Calculate amount (1-3 resources per drop)
+                const amount = Math.floor(Math.random() * 3) + 1;
+                
+                drops.push({
+                    resource: skillResource.resource,
+                    type: drop.type,
+                    amount: amount,
+                    displayName: this.getDisplayName(skillResource.resource, drop.type)
+                });
             }
         }
         
-        // Check if drop occurs (based on chance)
-        if (Math.random() > selectedDrop.chance) return null;
-        
-        // Calculate amount (1-3 resources per action)
-        const amount = Math.floor(Math.random() * 3) + 1;
-        
-        return {
-            resource: skillResource.resource,
-            type: selectedDrop.type,
-            amount: amount,
-            displayName: this.getDisplayName(skillResource.resource, selectedDrop.type)
-        };
+        return drops;
     }
     
     /**

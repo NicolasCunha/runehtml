@@ -14,6 +14,25 @@ class AnimationRenderer {
         // Get the appropriate animation based on level
         const anim = animationManager.getAnimation(skillKey, level);
         
+        // Check if target has an image
+        let targetHTML = '';
+        if (anim.targetImage) {
+            targetHTML = `
+                <div class="target-container">
+                    <img src="${anim.targetImage}" 
+                         alt="${anim.name}" 
+                         class="training-target-image"
+                         style="width: 64px; height: 64px; image-rendering: pixelated; image-rendering: crisp-edges;">
+                </div>
+            `;
+        } else if (anim.target) {
+            targetHTML = `
+                <div class="target-container">
+                    <pre class="training-target">${anim.target}</pre>
+                </div>
+            `;
+        }
+        
         animationArea.innerHTML = `
             <div class="training-animation">
                 <div class="animation-scene">
@@ -21,11 +40,7 @@ class AnimationRenderer {
                     <div class="character-container">
                         <pre class="stick-figure animate">${anim.character}</pre>
                     </div>
-                    ${anim.target ? `
-                    <div class="target-container">
-                        <pre class="training-target">${anim.target}</pre>
-                    </div>
-                    ` : ''}
+                    ${targetHTML}
                 </div>
                 <p class="activity-text">${anim.name}</p>
             </div>

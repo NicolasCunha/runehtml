@@ -9,8 +9,11 @@ class Game {
         this.state = gameState;
         
         // Initialize combat manager
-        combatManager = new CombatManager(this.state, skillsSystem, upgradesManager, this);
+        combatManager = new CombatManager(this.state, skillsSystem, charmsManager, this);
         this.combat = combatManager;
+        
+        // Connect modal manager to game state
+        modalManager.setGameState(this.state);
         
         this.init();
     }
@@ -133,6 +136,9 @@ class Game {
      * @param {string} username - The player's chosen username
      */
     createCharacter(username) {
+        // Limit username to 20 characters
+        username = username.trim().slice(0, 20);
+        
         // Reset game state to defaults
         this.state.reset();
         
@@ -164,7 +170,7 @@ class Game {
     
     /**
      * Activate cheat mode for special username
-     * Maxes all skills, unlocks all upgrades, adds Dessimon theme
+     * Maxes all skills, unlocks all charms, adds Dessimon theme
      */
     activateCheatMode() {
         // Max out all skills to level 99
@@ -179,9 +185,9 @@ class Game {
             this.state.update(`skills.${skillKey}`, skill);
         });
         
-        // Unlock all upgrades (stored as array of owned upgrade keys)
-        const allUpgradeKeys = Object.keys(upgradesManager.upgrades);
-        this.state.update('upgrades', allUpgradeKeys);
+        // Unlock all charms (stored as array of owned charm keys)
+        const allCharmKeys = Object.keys(charmsManager.charms);
+        this.state.update('upgrades', allCharmKeys);
         
         // Add massive resources for purchasing anything
         const resources = {
@@ -453,11 +459,19 @@ class Game {
             });
         }
         
-        // Shop button listener
+        // Charms button listener
         const shopButton = document.getElementById('shop-button');
         if (shopButton) {
             shopButton.addEventListener('click', () => {
                 this.showShop();
+            });
+        }
+        
+        // Equipment Shop button listener
+        const equipmentButton = document.getElementById('equipment-button');
+        if (equipmentButton) {
+            equipmentButton.addEventListener('click', () => {
+                this.showEquipmentShop();
             });
         }
         
@@ -474,6 +488,14 @@ class Game {
         if (themeButton) {
             themeButton.addEventListener('click', () => {
                 this.showThemeSelector();
+            });
+        }
+        
+        // Reset Skills button listener
+        const resetSkillsButton = document.getElementById('reset-skills-button');
+        if (resetSkillsButton) {
+            resetSkillsButton.addEventListener('click', () => {
+                this.resetSkills();
             });
         }
         
@@ -496,41 +518,41 @@ class Game {
     }
     
     /**
-     * Show the shop modal
+     * Show the charms modal
      */
     showShop() {
         const currentState = this.state.get();
-        modalManager.showShop(currentState, (upgradeKey) => {
-            this.purchaseUpgrade(upgradeKey);
+        modalManager.showShop(currentState, (charmKey) => {
+            this.purchaseCharm(charmKey);
         });
     }
     
     /**
-     * Purchase an upgrade
-     * @param {string} upgradeKey - The upgrade to purchase
+     * Purchase a charm
+     * @param {string} upgradeKey - The charm to purchase (kept as upgradeKey for backward compatibility)
      */
     purchaseUpgrade(upgradeKey) {
         const currentState = this.state.get();
-        const upgrade = upgradesManager.getUpgrade(upgradeKey);
+        const upgrade = charmsManager.getCharm(upgradeKey);
         
         if (!upgrade) return;
         
         // Check if can afford
-        if (!upgradesManager.canAfford(upgradeKey, currentState.resources)) {
-            this.showNotification('Cannot afford this upgrade!', '#ff6666');
+        if (!charmsManager.canAfford(upgradeKey, currentState.resources)) {
+            this.showNotification('Cannot afford this charm!', '#ff6666');
             return;
         }
         
         // Check level requirement
         const skill = currentState.skills[upgrade.skill];
-        if (!upgradesManager.meetsLevelRequirement(upgradeKey, skill.level)) {
+        if (!charmsManager.meetsLevelRequirement(upgradeKey, skill.level)) {
             this.showNotification(`Requires level ${upgrade.requiredLevel} ${skill.name}!`, '#ff6666');
             return;
         }
         
         // Check prerequisites
-        if (!upgradesManager.hasPrerequisites(upgradeKey, currentState.upgrades)) {
-            this.showNotification('Missing prerequisite upgrades!', '#ff6666');
+        if (!charmsManager.hasPrerequisites(upgradeKey, currentState.upgrades)) {
+            this.showNotification('Missing prerequisite charms!', '#ff6666');
             return;
         }
         
@@ -540,7 +562,7 @@ class Game {
             this.state.update(`resources.${resource}`, current - amount);
         }
         
-        // Add upgrade to owned list
+        // Add charm to owned list
         const newUpgrades = [...currentState.upgrades, upgradeKey];
         this.state.update('upgrades', newUpgrades);
         
@@ -565,7 +587,14 @@ class Game {
      */
     showInventory() {
         const currentState = this.state.get();
-        modalManager.showInventory(currentState.resources);
+        modalManager.showInventory(currentState.resources, currentState.currency);
+    }
+    
+    /**
+     * Show the equipment shop modal
+     */
+    showEquipmentShop() {
+        modalManager.showEquipmentShop();
     }
     
     /**
@@ -576,6 +605,45 @@ class Game {
             // Theme changed, no need to refresh
             this.showNotification('Theme changed!');
         });
+    }
+    
+    /**
+     * Reset skills - Clears inventory, stats, skills, and upgrades
+     */
+    resetSkills() {
+        modalManager.showConfirmation(
+            'RESET SKILLS',
+            'Are you sure you want to reset? This will clear your inventory, statistics, skills, and upgrades. Your character name and playtime will be preserved. This action cannot be undone!',
+            () => {
+                // Keep player info and UUID
+                const currentState = this.state.get();
+                const playerName = currentState.player.name;
+                const playerCreated = currentState.player.created;
+                const uuid = currentState.uuid;
+                const playTime = currentState.stats.playTime || 0;
+                
+                // Stop training
+                this.stopTraining();
+                
+                // Reset to defaults
+                this.state.reset();
+                
+                // Restore player info
+                this.state.update('uuid', uuid);
+                this.state.update('player.name', playerName);
+                this.state.update('player.created', playerCreated);
+                this.state.update('stats.playTime', playTime);
+                
+                // Save the reset state
+                this.saveGame();
+                
+                // Refresh the UI
+                this.ui.showGameScreen(this.state.get());
+                this.setupTrainingListeners();
+                
+                this.showNotification('Skills reset successfully!', '#ffff00');
+            }
+        );
     }
     
     /**
@@ -626,9 +694,10 @@ class Game {
             const currentIsCombat = this.combat.isCombatSkill(currentActivity);
             const newIsCombat = this.combat.isCombatSkill(skillKey);
             
-            // If both are combat skills but different, reset combat
+            // If both are combat skills but different, reset combat and update skill
             if (currentIsCombat && newIsCombat) {
                 this.state.update('combat.inCombat', false);
+                this.state.update('combat.skill', skillKey);
             }
         }
         
@@ -749,9 +818,17 @@ class Game {
         // Calculate exp gain (random between 10-30)
         const baseExpGain = Math.floor(Math.random() * 21) + 10;
         
-        // Apply upgrade bonuses
-        const bonus = upgradesManager.getTotalBonus(skillKey, currentState.upgrades);
-        const expGain = Math.floor(baseExpGain * (1 + bonus));
+        // Apply charm bonuses
+        const charmBonus = charmsManager.getTotalBonus(skillKey, currentState.upgrades);
+        let expGain = Math.floor(baseExpGain * (1 + charmBonus));
+        
+        // Check for Critical Success (1/100 chance for 2x XP)
+        const isCritical = Math.random() < 0.01;
+        if (isCritical) {
+            const originalExp = expGain;
+            expGain = expGain * 2;
+            this.showNotification(`Critical Success! +${originalExp} XP → +${expGain} XP!`, '#ffff00');
+        }
         
         // Add exp to skill
         const result = skillsSystem.addExp(skill, expGain);
@@ -764,12 +841,20 @@ class Game {
         const currentSkillTime = currentState.stats.skillTime[skillKey] || 0;
         this.state.update(`stats.skillTime.${skillKey}`, currentSkillTime + 1000);
         
-        // Check for resource drops
-        const resourceDrop = resourcesManager.getResourceDrop(skillKey, result.skill.level);
-        if (resourceDrop) {
-            const currentAmount = currentState.resources[resourceDrop.type] || 0;
-            this.state.update(`resources.${resourceDrop.type}`, currentAmount + resourceDrop.amount);
-            this.showNotification(`+${resourceDrop.amount} ${resourceDrop.displayName}`, 'var(--color-primary-dim)');
+        // Check for resource drops (now returns array of drops)
+        const resourceDrops = resourcesManager.getResourceDrop(skillKey, result.skill.level);
+        if (resourceDrops && resourceDrops.length > 0) {
+            // Build notification message for all drops
+            const dropMessages = [];
+            
+            for (const drop of resourceDrops) {
+                const currentAmount = currentState.resources[drop.type] || 0;
+                this.state.update(`resources.${drop.type}`, currentAmount + drop.amount);
+                dropMessages.push(`${drop.amount} ${drop.displayName}`);
+            }
+            
+            // Show combined notification
+            this.showNotification(`You obtained: ${dropMessages.join(', ')}`, 'var(--color-primary-dim)');
         }
         
         // Check for level up
