@@ -133,7 +133,7 @@ class CombatManager {
         const initialDamage = baseDamage;
 
         // Charm bonus from owned charms
-        const charmBonus = this.charms.getTotalBonus(attackSkill, this.state.get().upgrades) / 100;
+        const charmBonus = this.charms.getTotalBonus(attackSkill, this.state.get().charms) / 100;
         baseDamage *= (1 + charmBonus);
 
         // Weapon damage bonus from equipped weapon
@@ -187,7 +187,7 @@ class CombatManager {
         baseDamage *= Math.max(0.5, defenseReduction); // Min 50% damage even at 99 defense
         
         // Defense charm bonus from owned charms
-        const defenseCharmBonus = this.charms.getTotalBonus('defense', this.state.get().upgrades) / 100;
+        const defenseCharmBonus = this.charms.getTotalBonus('defense', this.state.get().charms) / 100;
         baseDamage *= (1 - defenseCharmBonus);
         
         // Armor defense bonus from equipped armor
@@ -218,7 +218,7 @@ class CombatManager {
         let maxHP = 100 + (defenseLevel * 10);
         
         // Defense charm bonus for HP
-        const defenseCharmBonus = this.charms.getTotalBonus('defense', this.state.get().upgrades);
+        const defenseCharmBonus = this.charms.getTotalBonus('defense', this.state.get().charms);
         maxHP += defenseCharmBonus * 5; // Each 10% defense charm bonus adds 50 HP
         
         return maxHP;
@@ -233,7 +233,7 @@ class CombatManager {
         
         // Calculate EXP reward
         const baseExp = enemy.level * 10;
-        const charmBonusMultiplier = 1 + (this.charms.getTotalBonus(combat.skill, this.state.get().upgrades) / 100);
+        const charmBonusMultiplier = 1 + (this.charms.getTotalBonus(combat.skill, this.state.get().charms) / 100);
         const expGained = Math.floor(baseExp * charmBonusMultiplier);
         
         // Award EXP
