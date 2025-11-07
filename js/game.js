@@ -792,6 +792,7 @@ class Game {
             if (combat.isRegenerating) {
                 this.combat.updateRegeneration();
                 this.ui.updateSkillCards(currentState.skills);
+                this.ui.updateCombatDisplay();
                 return;
             }
             

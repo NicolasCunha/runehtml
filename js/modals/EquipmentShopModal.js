@@ -97,6 +97,7 @@ class EquipmentShopModal extends BaseModal {
                             <option value="staff">Staff</option>
                             <option value="wand">Wand</option>
                             <option value="scythe">Scythe</option>
+                            <option value="pickaxe">Pickaxe</option>
                         </select>
                     </div>
                 </div>
