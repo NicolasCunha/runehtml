@@ -80,6 +80,19 @@ body {
 .menu {
     max-width: 400px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 400px;
+}
+
+.menu-main {
+    flex: 0 0 auto;
+}
+
+.menu-bottom {
+    flex: 0 0 auto;
+    margin-top: auto;
 }
 
 .menu-item {

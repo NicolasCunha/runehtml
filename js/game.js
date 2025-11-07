@@ -80,6 +80,12 @@ class Game {
             case 'about':
                 this.showAbout();
                 break;
+            case 'github':
+                this.openGitHub();
+                break;
+            case 'kofi':
+                this.openKofi();
+                break;
         }
     }
     
@@ -95,6 +101,20 @@ class Game {
      */
     showAbout() {
         modalManager.showAbout();
+    }
+    
+    /**
+     * Open GitHub repository in a new tab
+     */
+    openGitHub() {
+        window.open('https://github.com/NicolasCunha/runehtml', '_blank');
+    }
+    
+    /**
+     * Open Ko-fi support page in a new tab
+     */
+    openKofi() {
+        window.open('https://bmc.link/nfcunha', '_blank');
     }
     
     /**
@@ -528,8 +548,8 @@ class Game {
         this.saveGame();
         this.showNotification(`Purchased ${upgrade.name}!`, '#ffff00');
         
-        // Refresh shop without closing modal
-        this.showShop();
+        // Refresh shop content without closing modal
+        modalManager.refreshShop(this.state.get());
     }
     
     /**
@@ -797,6 +817,14 @@ class Game {
      * @param {string} color - The color of the message
      */
     showNotification(message, color = '#33dd33') {
+        // Remove any existing notifications first
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notif => {
+            if (notif.parentNode) {
+                document.body.removeChild(notif);
+            }
+        });
+        
         // Create notification element
         const notification = document.createElement('div');
         notification.className = 'notification';

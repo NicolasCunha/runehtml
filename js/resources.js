@@ -57,21 +57,36 @@ class ResourcesManager {
         const skillResource = this.skillResources[skillKey];
         if (!skillResource) return null;
         
-        // Find the appropriate drop based on level
-        const drop = skillResource.drops.find(d => level >= d.min && level <= d.max);
-        if (!drop) return null;
+        // Find all drops available at current level (current range and all previous ranges)
+        const availableDrops = skillResource.drops.filter(d => level >= d.min);
+        if (availableDrops.length === 0) return null;
+        
+        // Randomly select one of the available drops (weighted towards higher tier)
+        // Higher tier resources have higher probability
+        const weights = availableDrops.map((drop, index) => index + 1);
+        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+        let random = Math.random() * totalWeight;
+        
+        let selectedDrop = availableDrops[0];
+        for (let i = 0; i < availableDrops.length; i++) {
+            random -= weights[i];
+            if (random <= 0) {
+                selectedDrop = availableDrops[i];
+                break;
+            }
+        }
         
         // Check if drop occurs (based on chance)
-        if (Math.random() > drop.chance) return null;
+        if (Math.random() > selectedDrop.chance) return null;
         
         // Calculate amount (1-3 resources per action)
         const amount = Math.floor(Math.random() * 3) + 1;
         
         return {
             resource: skillResource.resource,
-            type: drop.type,
+            type: selectedDrop.type,
             amount: amount,
-            displayName: this.getDisplayName(skillResource.resource, drop.type)
+            displayName: this.getDisplayName(skillResource.resource, selectedDrop.type)
         };
     }
     

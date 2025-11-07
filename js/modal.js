@@ -195,6 +195,96 @@ class ModalManager {
 
         // Focus the close button
         closeBtn.focus();
+        
+        // Store callback for refresh
+        this.currentShopCallback = onPurchase;
+    }
+    
+    /**
+     * Refresh the shop content without closing the modal
+     * @param {Object} gameState - Current game state
+     */
+    refreshShop(gameState) {
+        if (!this.currentModal) return;
+        
+        const contentDiv = this.currentModal.querySelector('.modal-content');
+        if (!contentDiv) return;
+        
+        // Filter skills based on current activity
+        let skills = ['mining', 'woodcutting', 'chemistry'];
+        if (gameState.currentActivity) {
+            skills = [gameState.currentActivity];
+        }
+        
+        let shopHTML = '<p style="margin-bottom: 20px; font-size: 9px;">Purchase upgrades to boost your training efficiency!</p>';
+        
+        for (const skill of skills) {
+            const upgrades = upgradesManager.getUpgradesForSkill(skill);
+            const skillData = gameState.skills[skill];
+            
+            shopHTML += `<div class="shop-category">`;
+            shopHTML += `<h3 style="color: var(--color-primary); margin-bottom: 15px; text-transform: capitalize;">${skillData.name} Upgrades</h3>`;
+            
+            upgrades.forEach(upgrade => {
+                const owned = gameState.upgrades.includes(upgrade.key);
+                const canAfford = upgradesManager.canAfford(upgrade.key, gameState.resources);
+                const meetsLevel = upgradesManager.meetsLevelRequirement(upgrade.key, skillData.level);
+                const hasPrereqs = upgradesManager.hasPrerequisites(upgrade.key, gameState.upgrades);
+                
+                const canBuy = !owned && canAfford && meetsLevel && hasPrereqs;
+                const costStr = upgradesManager.formatCost(upgrade.cost);
+                
+                let statusText = '';
+                let statusColor = '';
+                if (owned) {
+                    statusText = 'OWNED';
+                    statusColor = '#ffff00';
+                } else if (!meetsLevel) {
+                    statusText = `REQUIRES LVL ${upgrade.requiredLevel}`;
+                    statusColor = '#ff6666';
+                } else if (!hasPrereqs) {
+                    statusText = 'LOCKED';
+                    statusColor = '#ff6666';
+                } else if (!canAfford) {
+                    statusText = 'CANNOT AFFORD';
+                    statusColor = '#ff9999';
+                } else {
+                    statusText = 'AVAILABLE';
+                    statusColor = 'var(--color-primary)';
+                }
+                
+                const bonusPercent = Math.round(upgrade.bonus * 100);
+                
+                shopHTML += `
+                    <div class="shop-item ${owned ? 'owned' : ''} ${canBuy ? 'can-buy' : ''}">
+                        <div class="shop-item-header">
+                            <strong>${upgrade.name}</strong>
+                            <span style="color: ${statusColor}; font-size: 8px;">${statusText}</span>
+                        </div>
+                        <p style="font-size: 8px; color: #999; margin: 5px 0;">${upgrade.description}</p>
+                        <p style="font-size: 9px; margin: 5px 0;">Bonus: <span style="color: var(--color-primary);">+${bonusPercent}% EXP</span></p>
+                        <p style="font-size: 8px; margin: 5px 0;">Cost: <span style="color: #ffff00;">${costStr}</span></p>
+                        ${canBuy ? `<button class="shop-buy-btn" data-upgrade="${upgrade.key}">Purchase</button>` : ''}
+                    </div>
+                `;
+            });
+            
+            shopHTML += '</div><br>';
+        }
+        
+        // Update the content
+        contentDiv.innerHTML = shopHTML;
+        
+        // Re-attach purchase button listeners
+        const buyButtons = contentDiv.querySelectorAll('.shop-buy-btn');
+        buyButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const upgradeKey = btn.getAttribute('data-upgrade');
+                if (this.currentShopCallback) {
+                    this.currentShopCallback(upgradeKey);
+                }
+            });
+        });
     }
 
     /**
