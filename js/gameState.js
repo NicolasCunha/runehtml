@@ -57,7 +57,7 @@ class GameState {
             currency: {
                 gold: 100 // Starting gold for equipment purchases
             },
-            upgrades: [],
+            charms: [],
             stats: {
                 totalActions: 0,
                 playTime: 0,
@@ -126,9 +126,15 @@ class GameState {
         // Deep merge for resources to ensure backward compatibility
         this.state.resources = { ...defaultState.resources, ...(savedState.resources || {}) };
         
-        // Ensure upgrades is always an array (for backward compatibility)
-        if (!Array.isArray(this.state.upgrades)) {
-            this.state.upgrades = [];
+        // Migrate old 'upgrades' property to 'charms' (for backward compatibility)
+        if (savedState.upgrades && Array.isArray(savedState.upgrades)) {
+            this.state.charms = savedState.upgrades;
+            delete this.state.upgrades; // Remove old property
+        }
+        
+        // Ensure charms is always an array (for backward compatibility)
+        if (!Array.isArray(this.state.charms)) {
+            this.state.charms = [];
         }
         
         // Ensure stats.skillTime exists (for backward compatibility)

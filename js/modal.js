@@ -85,6 +85,21 @@ class ModalManager {
     }
 
     /**
+     * Generate owned resources display string
+     * @param {Object} cost - Cost object with resource: amount pairs
+     * @param {Object} resources - Player's current resources
+     * @returns {string} - Formatted string showing owned amounts
+     */
+    getOwnedResourcesString(cost, resources) {
+        const ownedParts = [];
+        for (const [resource, amount] of Object.entries(cost)) {
+            const playerHas = resources[resource] || 0;
+            ownedParts.push(`${playerHas} ${combatResourcesManager.formatResourceName(resource)}`);
+        }
+        return ownedParts.join(', ');
+    }
+
+    /**
      * Show the equipment shop modal
      */
     showEquipmentShop() {
@@ -118,10 +133,10 @@ class ModalManager {
             shopHTML += `<h3 style="color: var(--color-primary); margin-bottom: 15px; text-transform: capitalize;">${skillData.name} Charms</h3>`;
             
             charms.forEach(charm => {
-                const owned = gameState.upgrades.includes(charm.key);
+                const owned = gameState.charms.includes(charm.key);
                 const canAfford = charmsManager.canAfford(charm.key, gameState.resources);
                 const meetsLevel = charmsManager.meetsLevelRequirement(charm.key, skillData.level);
-                const hasPrereqs = charmsManager.hasPrerequisites(charm.key, gameState.upgrades);
+                const hasPrereqs = charmsManager.hasPrerequisites(charm.key, gameState.charms);
                 
                 const canBuy = !owned && canAfford && meetsLevel && hasPrereqs;
                 const costStr = charmsManager.formatCost(charm.cost);
@@ -147,6 +162,7 @@ class ModalManager {
                 
                 const bonusPercent = Math.round(charm.bonus * 100);
                 
+                const ownedStr = this.getOwnedResourcesString(charm.cost, gameState.resources);
                 shopHTML += `
                     <div class="shop-item ${owned ? 'owned' : ''} ${canBuy ? 'can-buy' : ''}">
                         <div class="shop-item-header">
@@ -156,6 +172,7 @@ class ModalManager {
                         <p style="font-size: 8px; color: #999; margin: 5px 0;">${charm.description}</p>
                         <p style="font-size: 9px; margin: 5px 0;">Bonus: <span style="color: var(--color-primary);">+${bonusPercent}% EXP</span></p>
                         <p style="font-size: 8px; margin: 5px 0;">Cost: <span style="color: #ffff00;">${costStr}</span></p>
+                        <p style="font-size: 8px; margin: 5px 0;">Owned: <span style="color: #999;">${ownedStr}</span></p>
                         ${canBuy ? `<button class="shop-buy-btn" data-charm="${charm.key}">Purchase</button>` : ''}
                     </div>
                 `;
@@ -254,10 +271,10 @@ class ModalManager {
             shopHTML += `<h3 style="color: var(--color-primary); margin-bottom: 15px; text-transform: capitalize;">${skillData.name} Charms</h3>`;
             
             charms.forEach(charm => {
-                const owned = gameState.upgrades.includes(charm.key);
+                const owned = gameState.charms.includes(charm.key);
                 const canAfford = charmsManager.canAfford(charm.key, gameState.resources);
                 const meetsLevel = charmsManager.meetsLevelRequirement(charm.key, skillData.level);
-                const hasPrereqs = charmsManager.hasPrerequisites(charm.key, gameState.upgrades);
+                const hasPrereqs = charmsManager.hasPrerequisites(charm.key, gameState.charms);
                 
                 const canBuy = !owned && canAfford && meetsLevel && hasPrereqs;
                 const costStr = charmsManager.formatCost(charm.cost);
@@ -282,6 +299,7 @@ class ModalManager {
                 }
                 
                 const bonusPercent = Math.round(charm.bonus * 100);
+                const ownedStr = this.getOwnedResourcesString(charm.cost, gameState.resources);
                 
                 shopHTML += `
                     <div class="shop-item ${owned ? 'owned' : ''} ${canBuy ? 'can-buy' : ''}">
@@ -292,6 +310,7 @@ class ModalManager {
                         <p style="font-size: 8px; color: #999; margin: 5px 0;">${charm.description}</p>
                         <p style="font-size: 9px; margin: 5px 0;">Bonus: <span style="color: var(--color-primary);">+${bonusPercent}% EXP</span></p>
                         <p style="font-size: 8px; margin: 5px 0;">Cost: <span style="color: #ffff00;">${costStr}</span></p>
+                        <p style="font-size: 8px; margin: 5px 0;">Owned: <span style="color: #999;">${ownedStr}</span></p>
                         ${canBuy ? `<button class="shop-buy-btn" data-charm="${charm.key}">Purchase</button>` : ''}
                     </div>
                 `;
@@ -539,7 +558,7 @@ class ModalManager {
         const totalResources = stats.getTotalResources(gameState.resources);
         const resourcesByCategory = stats.getResourcesByCategory(gameState.resources);
         const mostGathered = stats.getMostGatheredResource(gameState.resources);
-        const charmStats = stats.getCharmStats(gameState.upgrades, gameState.skills);
+        const charmStats = stats.getCharmStats(gameState.charms, gameState.skills);
         const playTime = stats.formatTime(gameState.stats.playTime);
         
         // Build skill time breakdown

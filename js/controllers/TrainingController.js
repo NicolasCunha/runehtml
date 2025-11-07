@@ -265,7 +265,7 @@ class TrainingController {
         const baseExpGain = Math.floor(Math.random() * 21) + 10;
         
         // Apply charm bonuses
-        const charmBonus = this.charmsManager.getTotalBonus(skillKey, currentState.upgrades);
+        const charmBonus = this.charmsManager.getTotalBonus(skillKey, currentState.charms);
         const expGain = Math.floor(baseExpGain * (1 + charmBonus));
         
         // Add exp to skill

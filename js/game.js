@@ -340,16 +340,18 @@ class Game {
         // Calculate offline resources gathered
         let resourcesGathered = {};
         for (let i = 0; i < actionsPerformed; i++) {
-            const drop = resourcesManager.getResourceDrop(offlineData.trainingSkill, skill.level);
-            if (drop) {
-                if (!resourcesGathered[drop.type]) {
-                    resourcesGathered[drop.type] = { amount: 0, name: drop.displayName };
-                }
-                resourcesGathered[drop.type].amount += drop.amount;
-                
-                // Update state
-                const currentAmount = currentState.resources[drop.type] || 0;
-                this.state.update(`resources.${drop.type}`, currentAmount + drop.amount);
+            const drops = resourcesManager.getResourceDrop(offlineData.trainingSkill, skill.level);
+            if (drops) {
+                drops.forEach(drop => {
+                    if (!resourcesGathered[drop.type]) {
+                        resourcesGathered[drop.type] = { amount: 0, name: drop.displayName };
+                    }
+                    resourcesGathered[drop.type].amount += drop.amount;
+
+                    // Update state
+                    const currentAmount = currentState.resources[drop.type] || 0;
+                    this.state.update(`resources.${drop.type}`, currentAmount + drop.amount);
+                });
             }
         }
         
@@ -529,29 +531,29 @@ class Game {
     
     /**
      * Purchase a charm
-     * @param {string} upgradeKey - The charm to purchase (kept as upgradeKey for backward compatibility)
+     * @param {string} charmKey - The charm to purchase (kept as upgradeKey for backward compatibility)
      */
-    purchaseUpgrade(upgradeKey) {
+    purchaseCharm(charmKey) {
         const currentState = this.state.get();
-        const upgrade = charmsManager.getCharm(upgradeKey);
+        const upgrade = charmsManager.getCharm(charmKey);
         
         if (!upgrade) return;
         
         // Check if can afford
-        if (!charmsManager.canAfford(upgradeKey, currentState.resources)) {
+        if (!charmsManager.canAfford(charmKey, currentState.resources)) {
             this.showNotification('Cannot afford this charm!', '#ff6666');
             return;
         }
         
         // Check level requirement
         const skill = currentState.skills[upgrade.skill];
-        if (!charmsManager.meetsLevelRequirement(upgradeKey, skill.level)) {
+        if (!charmsManager.meetsLevelRequirement(charmKey, skill.level)) {
             this.showNotification(`Requires level ${upgrade.requiredLevel} ${skill.name}!`, '#ff6666');
             return;
         }
         
         // Check prerequisites
-        if (!charmsManager.hasPrerequisites(upgradeKey, currentState.upgrades)) {
+        if (!charmsManager.hasPrerequisites(charmKey, currentState.charms)) {
             this.showNotification('Missing prerequisite charms!', '#ff6666');
             return;
         }
@@ -563,8 +565,8 @@ class Game {
         }
         
         // Add charm to owned list
-        const newUpgrades = [...currentState.upgrades, upgradeKey];
-        this.state.update('upgrades', newUpgrades);
+        const newCharms = [...currentState.charms, charmKey];
+        this.state.update('charms', newCharms);
         
         // Save and notify
         this.saveGame();
@@ -817,10 +819,16 @@ class Game {
         // Non-combat skills: Original resource gathering logic
         // Calculate exp gain (random between 10-30)
         const baseExpGain = Math.floor(Math.random() * 21) + 10;
+
+        // Increase exp gain based on skill level (1% per level)
+        const levelBonus = skill.level * 0.01;
+        let expGain = Math.floor(baseExpGain * (1 + levelBonus));
         
-        // Apply charm bonuses
-        const charmBonus = charmsManager.getTotalBonus(skillKey, currentState.upgrades);
-        let expGain = Math.floor(baseExpGain * (1 + charmBonus));
+        // Apply charm bonuses. Charm bonuses are in %.
+        const charmBonus = charmsManager.getTotalBonus(skillKey, currentState.charms);
+        if (charmBonus && charmBonus > 0) {
+            expGain += (expGain / 100) * charmBonus;
+        }
         
         // Check for Critical Success (1/100 chance for 2x XP)
         const isCritical = Math.random() < 0.01;

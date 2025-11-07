@@ -317,23 +317,14 @@ class CharmsManager {
         }
         return charms;
     }
-    
+
     /**
-     * Backward compatibility method for getUpgradesForSkill
-     * @param {string} skill - The skill to filter by
-     * @returns {Array} - Array of charm objects with keys
+     * Get a specific charm by key
+     * @param {string} key - The charm key
+     * @returns {Object} - Charm object
      */
-    getUpgradesForSkill(skill) {
-        return this.getCharmsForSkill(skill);
-    }
-    
-    /**
-     * Get a specific charm by key (backward compatibility)
-     * @param {string} charmKey - The charm key
-     * @returns {Object|null} - The charm object or null
-     */
-    getUpgrade(charmKey) {
-        return this.charms[charmKey] || null;
+    getCharm(key) {
+        return this.charms[key];
     }
     
     /**
@@ -400,22 +391,10 @@ class CharmsManager {
     }
     
     /**
-     * Get upgrade by key
-     * @param {string} key - Upgrade key
-     * @returns {Object} - Upgrade object
-     */
-    getUpgrade(key) {
-        return this.upgrades[key];
-    }
-    
-    /**
-     * Check if player meets level requirement
-     * @param {string} upgradeKey - The upgrade to check
-     * @param {number} currentLevel - Player's current level in the skill
-     * @returns {boolean} - Whether level requirement is met
+     * Check if current level meets the requirement for a charm
      */
     meetsLevelRequirement(upgradeKey, currentLevel) {
-        const upgrade = this.upgrades[upgradeKey];
+        const upgrade = this.charms[upgradeKey];
         if (!upgrade) return false;
         return currentLevel >= upgrade.requiredLevel;
     }
@@ -435,5 +414,11 @@ class CharmsManager {
 // Export the charms manager
 const charmsManager = new CharmsManager();
 
-// Backwards compatibility - keep upgradesManager reference
+// Backwards compatibility - keep upgradesManager reference  
 const upgradesManager = charmsManager;
+
+// Make sure both are globally available
+if (typeof window !== 'undefined') {
+    window.charmsManager = charmsManager;
+    window.upgradesManager = upgradesManager;
+}
